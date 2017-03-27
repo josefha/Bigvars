@@ -1,0 +1,160 @@
+-- Questions:
+-- how to check for a type (create different bigvars), polymorphism?
+-- chain of the same functions? better way? bigvar -> supr -> worker
+-- To check:
+-- import statement
+
+class Main
+    def main() : unit
+        var arr1 = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21]
+
+        var bigvar = new Bigvar[int](arr1)
+        bigvar.printdata()
+        var num = bigvar.atindex(10)
+        println("value at index 10:{}", num)
+
+        var test = new Test[int](5)
+        println("test -> {}", get(test ! content()))
+    end
+end
+
+class Test[t]
+    var content : t
+    def init(v:t) : unit
+        this.content = v
+    end
+    def content() : t
+        this.content
+    end
+
+end
+
+
+trait BasicBigvar[t]
+    require var size : int
+    require var numsupr : int
+
+    def createbigvar(array:[int]) : Bigvar[int]
+        new Bigvar[int](array)
+    end
+end
+
+passive class Bigvar[t] : BasicBigvar[t]
+    var size : int
+    var numsupr : int
+    var supr : [(Supr[int],int,int)]
+
+    def init(array:[int]) : unit
+        this.size = |array|
+        var suprvisor =  new Supr[int](array,3)
+        this.supr = [(suprvisor,0,this.size-1)]
+    end
+
+    def printdata() : unit
+        var suprvisor = this.supr(0).0
+        suprvisor ! printworkerdata()
+    end
+
+    def atindex(index: int) : int
+        var answer = -1
+        for s <- this.supr do
+            if(index >= s.1) && (index <= s.2) then
+                var supervisor = s.0
+                answer = get(supervisor ! atindex(index))
+                break
+            end
+        end
+        answer
+    end
+end
+
+class Supr[t]
+    var numofworkers: int
+    var workers : [(Worker,int,int)]
+    var type : t
+
+    def init(data:[int], type:t) : unit
+        this.type = type
+        this.numofworkers = 4
+        this.workers = this.split(data,this.numofworkers)
+    end
+
+    def split(data: [int], numofsplits: int) : [(Worker,int,int)]
+        var length = |data|
+        var rest = length % numofsplits
+        var splitsize = (length - rest) / numofsplits
+
+        var splits = new [(Worker,int,int)](numofsplits)
+        var shift = 0
+        repeat i <- |splits| do
+            var first = splitsize*i
+            var last = splitsize*(i+1)-1
+            if i >= |splits|-rest then
+                if i == |splits|-rest then
+                    splits(i) = splitdata(data,first,last+1)
+                    shift += 1
+                else
+                    splits(i) = splitdata(data,first+shift,last+shift+1)
+                    shift += 1
+                end
+            else
+                splits(i) = splitdata(data,first,last)
+            end
+        end
+        splits
+    where
+        fun splitdata(data:[int],start:int,last:int) : (Worker,int,int)
+            var splitsize = last-start+1
+            var split = new [int](splitsize)
+            repeat index <- splitsize do
+                split(index) = data(start+index)
+            end
+            var worker = new Worker(split)
+            println("{}:{}",start,last)
+            (worker,start,last)
+        end
+    end
+
+    def atindex(index: int) : int
+        var answer = -1
+        for worker <- this.workers do
+            if(index >= worker.1) && (index <= worker.2) then
+                var w = worker.0
+                var ans = w ! atindex(index-worker.1)
+                answer = get(ans)
+                break
+            end
+        end
+        answer
+    end
+
+    def printworkerdata() : unit
+        for worker <- this.workers do
+            var w = worker.0
+            w ! printelements()
+        end
+    end
+end
+
+class Worker
+    var data : [int]
+    var size : int
+    var id : int
+
+    def init(data:[int]) : unit
+        this.data = data
+        this.size = |data|
+    end
+
+    def atindex(index: int) : int
+        this.data(index)
+    end
+
+    def printelements() : unit
+        var elements = ""
+        for element <- this.data do
+            elements = elements.concatenate(string_from_int(element)).concatenate(",")
+        end
+        print("worker has elements = {} size = {} \n", elements, |this.data|)
+    end
+end
