@@ -1,8 +1,4 @@
 -- preferodal atchensame / encore case study
--- future cahining.
--- mapreduce framework
--- applyat(5,9,function)
-
 
 module Bigvar
 
@@ -35,7 +31,7 @@ passive class Bigvar[t] : BasicBigvar[t]
     end
 
     def atindex(index: int) : t
-        this.owner(index).atindex(index)
+      this.owner(index).atindex(index)
     end
 
     def owner(index: int) : Supr[t]
@@ -44,5 +40,9 @@ passive class Bigvar[t] : BasicBigvar[t]
 
     def size() : int
         this.size
+    end
+
+    def applyto(index:int, f : t -> t) : unit
+      this.owner(index).applyto(index,f)
     end
 end

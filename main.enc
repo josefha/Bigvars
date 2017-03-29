@@ -5,7 +5,7 @@ import Bigvar
 class Main
     def main() : unit
 
-        var values = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21]
+        var values = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21] --new range(1,20).to_a()
         var bigvar = new Bigvar[int](values)
 
         repeat i <- |values| do
@@ -13,7 +13,7 @@ class Main
             println("value at index {} -> {}",i,num)
         end
 
-        bigvar.printdata()
+        --bigvar.printdata()
 
         var people_array = [new Person("Josef"),new Person("Erik"),new Person("Sahand"),new Person("Joel"),new Person("Basse")]
         var people_bigvar = new Bigvar[Person](people_array)
@@ -22,7 +22,37 @@ class Main
             var person = people_bigvar.atindex(i)
             println("person at index {} -> {}",i,person.name)
         end
+
+	var replace = fun (p:Person) => replaceperson(p)
+        people_bigvar.applyto(3,replace)
+ 
+        repeat i <- people_bigvar.size() do
+          var person = people_bigvar.atindex(i)
+          println("person at index {} -> {}",i,person.name)
+        end
+	
+
+        --fun (p : Push) => fun (x : int) => p.push(x)
+        --var printv = fun (v:int) => println(v)
+        var increase = fun(v:int) => increase(v)
+	
+	bigvar.applyto(4,increase)
+        println("value at index {} -> {}",4,bigvar.atindex(4))
+ 
+
+	-- repeat i <- |values| do
+        --     var num = bigvar.atindex(i)
+        --     println("value at index {} -> {}",i,num)
+        -- end
     end
+end
+
+fun increase(value:int) : int
+  value+100
+end
+
+fun replaceperson(p:Person) : Person
+  new Person("newperson")
 end
 
 passive class Person

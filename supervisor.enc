@@ -52,12 +52,13 @@ passive class Supr[t]
     end
 
     def atindex(index: int) : t
-        var owner = this.owner(index)
+        var owner = this.ownerinfo(index)
         var worker = owner.0
         get(worker ! atindex(index-owner.1))
     end
 
-    def owner(index: int) : (Worker[t],int,int)
+    -- Returns a touple with worker holding index and index range
+    def ownerinfo(index: int) : (Worker[t],int,int)
         var windex = 0
         repeat i <- |this.workers| do
             if(index >= this.workers(i).1) && (index <= this.workers(i).2) then
@@ -67,10 +68,26 @@ passive class Supr[t]
         this.workers(windex)
     end
 
+    def windex(i:int, w:(Worker[t],int,int)) : int
+      i - w.1
+    end
+
+    def applyto(index:int, f : t -> t) : unit
+        var workerinfo = this.ownerinfo(index)
+        var worker = workerinfo.0
+        worker ! applyto(this.windex(index,workerinfo),f)
+    end
+    
+    def applyto_unit(index:int, f : t -> unit) : unit
+      var workerinfo = this.ownerinfo(index)
+      var worker = workerinfo.0
+      worker ! applyto_unit(this.windex(index,workerinfo),f)
+    end
+
     def printworkerdata() : unit
-        for worker <- this.workers do
-            var w = worker.0
-            w ! printelements()
-        end
+      for worker <- this.workers do
+        var w = worker.0
+        w ! printelements()
+      end
     end
 end

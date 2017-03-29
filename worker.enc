@@ -2,32 +2,43 @@
 module Worker
 
 class Worker[t]
-    var data : [t]
-    var size : int
-    var id : int
+  var data : [t]
+  var size : int
+  var id : int
+  var startindex : int
+  
+  def init(data:[t]) : unit
+    this.data = data
+    this.size = |data|
+  end
 
-    def init(data:[t]) : unit
-        this.data = data
-        this.size = |data|
+  def atindex(index: int) : t
+    if (index > this.size-1) then
+      println("ERROR: Index out of range")
     end
 
-    def atindex(index: int) : t
-        if (index > this.size-1) then
-            println("ERROR: Index out of range")
-        end
+    this.data(index)
+  end
 
-        this.data(index)
-    end
+  def printelements() : unit
+    --for element <- this.data do
+    --this.printelement(element)
+    --     elements = elements.concatenate(string_from_int(element)).concatenate(",")
+    --end
+    println("Size {}", this.size)
+  end
 
-    def printelements() : unit
-        --for element <- this.data do
-            --this.printelement(element)
-        --     elements = elements.concatenate(string_from_int(element)).concatenate(",")
-        --end
-        println("Size {}", this.size)
-    end
+  def printelement(v:t -> String) : unit
+    println(v)
+  end
 
-    def printelement(v:t -> String) : unit
-        println(v)
-    end
+  def applyto(index:int, f : t -> t) : unit
+    --println("running function f on index {}", index)
+    
+    this.data(index) = f(this.data(index))
+  end
+
+  def applyto_unit(index:int, f : t -> unit) : unit
+    f(this.data(index))
+  end
 end
