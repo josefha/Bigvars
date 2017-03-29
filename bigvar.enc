@@ -45,4 +45,8 @@ passive class Bigvar[t] : BasicBigvar[t]
     def applyto(index:int, f : t -> t) : unit
       this.owner(index).applyto(index,f)
     end
+
+    def applyto_unit(index:int, f : t -> unit) : unit
+      this.owner(index).applyto(index,f)
+    end
 end
