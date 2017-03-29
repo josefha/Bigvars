@@ -1,7 +1,33 @@
-module worker
 
-class worker
-    def hello(): unit
-        print("Hello")
+module Worker
+
+class Worker[t]
+    var data : [t]
+    var size : int
+    var id : int
+
+    def init(data:[t]) : unit
+        this.data = data
+        this.size = |data|
+    end
+
+    def atindex(index: int) : t
+        if (index > this.size-1) then
+            println("ERROR: Index out of range")
+        end
+
+        this.data(index)
+    end
+
+    def printelements() : unit
+        --for element <- this.data do
+            --this.printelement(element)
+        --     elements = elements.concatenate(string_from_int(element)).concatenate(",")
+        --end
+        println("Size {}", this.size)
+    end
+
+    def printelement(v:t -> String) : unit
+        println(v)
     end
 end

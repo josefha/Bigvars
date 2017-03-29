@@ -1,0 +1,76 @@
+
+module Supervisor
+
+import Worker
+
+passive class Supr[t]
+    var numofworkers: int
+    var workers : [(Worker[t],int,int)]
+    var type : t
+
+    def init(data:[t]) : unit
+        this.numofworkers = 4
+        this.workers = this.split(data,this.numofworkers)
+    end
+
+    -- Creating Workers and splitting the data evenly
+    def split(data: [t], numofsplits: int) : [(Worker[t],int,int)]
+        var length = |data|
+        var rest = length % numofsplits
+        var splitsize = (length - rest) / numofsplits
+
+        var splits = new [(Worker[t],int,int)](numofsplits)
+        var shift = 0
+        repeat i <- |splits| do
+            var first = splitsize*i
+            var last = splitsize*(i+1)-1
+            if i >= |splits|-rest then
+                if i == |splits|-rest then
+                    splits(i) = this.splitdata(data,first,last+1)
+                    shift += 1
+                else
+                    splits(i) = this.splitdata(data,first+shift,last+shift+1)
+                    shift += 1
+                end
+            else
+                splits(i) = this.splitdata(data,first,last)
+            end
+        end
+        splits
+    end
+
+    -- inserts correct data into worker and returns what indexes they hold
+    def splitdata(data:[t],start:int,last:int) : (Worker[t],int,int)
+        var splitsize = last-start+1
+        var split = new [t](splitsize)
+        repeat index <- splitsize do
+            split(index) = data(start+index)
+        end
+        var worker = new Worker[t](split)
+        --println("{}:{}",start,last)
+        (worker,start,last)
+    end
+
+    def atindex(index: int) : t
+        var owner = this.owner(index)
+        var worker = owner.0
+        get(worker ! atindex(index-owner.1))
+    end
+
+    def owner(index: int) : (Worker[t],int,int)
+        var windex = 0
+        repeat i <- |this.workers| do
+            if(index >= this.workers(i).1) && (index <= this.workers(i).2) then
+                windex = i
+            end
+        end
+        this.workers(windex)
+    end
+
+    def printworkerdata() : unit
+        for worker <- this.workers do
+            var w = worker.0
+            w ! printelements()
+        end
+    end
+end

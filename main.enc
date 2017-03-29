@@ -1,0 +1,33 @@
+-- For testing purpose
+
+import Bigvar
+
+class Main
+    def main() : unit
+
+        var values = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21]
+        var bigvar = new Bigvar[int](values)
+
+        repeat i <- |values| do
+            var num = bigvar.atindex(i)
+            println("value at index {} -> {}",i,num)
+        end
+
+        bigvar.printdata()
+
+        var people_array = [new Person("Josef"),new Person("Erik"),new Person("Sahand"),new Person("Joel"),new Person("Basse")]
+        var people_bigvar = new Bigvar[Person](people_array)
+
+        repeat i <- people_bigvar.size() do
+            var person = people_bigvar.atindex(i)
+            println("person at index {} -> {}",i,person.name)
+        end
+    end
+end
+
+passive class Person
+    var name : String
+    def init(name:String) : unit
+        this.name = name
+    end
+end
