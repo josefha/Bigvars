@@ -1,0 +1,7 @@
+module worker
+
+class worker
+    def hello(): unit
+        print("Hello")
+    end
+end

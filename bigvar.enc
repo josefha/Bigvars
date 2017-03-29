@@ -1,131 +1,142 @@
--- Questions:
--- how to check for a type (create different bigvars), polymorphism?
--- chain of the same functions? better way? bigvar -> supr -> worker
--- To check:
+-- Notes ::
 -- import statement
+-- preferodal atchensame / encore case study
+-- future cahining.
+-- mapreduce framework
+-- applyat(5,9,function)
 
 class Main
     def main() : unit
-        var arr1 = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21]
+        var values = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21]
+        var bigvar = new Bigvar[int](values)
 
-        var bigvar = new Bigvar[int](arr1)
+        repeat i <- |values| do
+            var num = bigvar.atindex(i)
+            println("value at index {} -> {}",i,num)
+        end
         bigvar.printdata()
-        var num = bigvar.atindex(10)
-        println("value at index 10:{}", num)
 
-        var test = new Test[int](5)
-        println("test -> {}", get(test ! content()))
+        var people = [new Person("Josef"),new Person("Erik"),new Person("Sahand"),new Person("Joel"),new Person("Basse")]
+        -- --println("first preson name = {}", persons(0).name)
+        -- --bigvar_persons.printdata()
+        var people_bigvar = new Bigvar[Person](people)
+        var person1 = people_bigvar.atindex(0)
+        -- -- println("person at index 0 -> {}", person1.name)
+        --
+        -- repeat i <- people_bigvar.size() do
+        --     var person = people_bigvar.atindex(i)
+        --     println("person at index {} -> {}",i,person.name)
+        -- end
     end
 end
 
-class Test[t]
-    var content : t
-    def init(v:t) : unit
-        this.content = v
+passive class Person
+    var name : String
+    def init(name:String) : unit
+        this.name = name
     end
-    def content() : t
-        this.content
-    end
-
 end
-
 
 trait BasicBigvar[t]
     require var size : int
-    require var numsupr : int
 
-    def createbigvar(array:[int]) : Bigvar[int]
-        new Bigvar[int](array)
+    def createbigvar(array:[t]) : Bigvar[t]
+        new Bigvar[t](array)
     end
 end
 
 passive class Bigvar[t] : BasicBigvar[t]
     var size : int
     var numsupr : int
-    var supr : [(Supr[int],int,int)]
+    var supr : [(Supr[t],int,int)]
 
-    def init(array:[int]) : unit
+    def init(array:[t]) : unit
         this.size = |array|
-        var suprvisor =  new Supr[int](array,3)
+        var suprvisor = new Supr[t](array)
         this.supr = [(suprvisor,0,this.size-1)]
     end
 
     def printdata() : unit
-        var suprvisor = this.supr(0).0
-        suprvisor ! printworkerdata()
+        for suprinfo <- this.supr do
+            var supr = suprinfo.0
+            supr.printworkerdata()
+        end
     end
 
-    def atindex(index: int) : int
-        var answer = -1
-        for s <- this.supr do
-            if(index >= s.1) && (index <= s.2) then
-                var supervisor = s.0
-                answer = get(supervisor ! atindex(index))
-                break
-            end
-        end
-        answer
+    def atindex(index: int) : t
+        this.owner(index).atindex(index)
+    end
+
+    def owner(index: int) : Supr[t]
+        return this.supr(0).0
+    end
+
+    def size() : int
+        this.size
     end
 end
 
-class Supr[t]
+passive class Supr[t]
     var numofworkers: int
-    var workers : [(Worker,int,int)]
+    var workers : [(Worker[t],int,int)]
     var type : t
 
-    def init(data:[int], type:t) : unit
-        this.type = type
+    def init(data:[t]) : unit
         this.numofworkers = 4
         this.workers = this.split(data,this.numofworkers)
     end
 
-    def split(data: [int], numofsplits: int) : [(Worker,int,int)]
+    def split(data: [t], numofsplits: int) : [(Worker[t],int,int)]
         var length = |data|
         var rest = length % numofsplits
         var splitsize = (length - rest) / numofsplits
 
-        var splits = new [(Worker,int,int)](numofsplits)
+        var splits = new [(Worker[t],int,int)](numofsplits)
         var shift = 0
         repeat i <- |splits| do
             var first = splitsize*i
             var last = splitsize*(i+1)-1
             if i >= |splits|-rest then
                 if i == |splits|-rest then
-                    splits(i) = splitdata(data,first,last+1)
+                    splits(i) = this.splitdata(data,first,last+1)
                     shift += 1
                 else
-                    splits(i) = splitdata(data,first+shift,last+shift+1)
+                    splits(i) = this.splitdata(data,first+shift,last+shift+1)
                     shift += 1
                 end
             else
-                splits(i) = splitdata(data,first,last)
+                splits(i) = this.splitdata(data,first,last)
             end
         end
         splits
-    where
-        fun splitdata(data:[int],start:int,last:int) : (Worker,int,int)
-            var splitsize = last-start+1
-            var split = new [int](splitsize)
-            repeat index <- splitsize do
-                split(index) = data(start+index)
-            end
-            var worker = new Worker(split)
-            println("{}:{}",start,last)
-            (worker,start,last)
-        end
     end
 
-    def atindex(index: int) : int
-        var answer = -1
-        for worker <- this.workers do
-            if(index >= worker.1) && (index <= worker.2) then
-                var w = worker.0
-                var ans = w ! atindex(index-worker.1)
-                answer = get(ans)
-                break
+    def splitdata(data:[t],start:int,last:int) : (Worker[t],int,int)
+        var splitsize = last-start+1
+        var split = new [t](splitsize)
+        repeat index <- splitsize do
+            split(index) = data(start+index)
+        end
+        var worker = new Worker[t](split)
+        --println("{}:{}",start,last)
+        (worker,start,last)
+    end
+
+    def atindex(index: int) : t
+        --println("in supervisor")
+        var owner = this.owner(index)
+        var worker = owner.0
+        get(worker ! atindex(index-owner.1))
+    end
+
+    def owner(index: int) : (Worker[t],int,int)
+        var windex = 0
+        repeat i <- |this.workers| do
+            if(index >= this.workers(i).1) && (index <= this.workers(i).2) then
+                windex = i
             end
         end
-        answer
+        this.workers(windex)
     end
 
     def printworkerdata() : unit
@@ -136,25 +147,33 @@ class Supr[t]
     end
 end
 
-class Worker
-    var data : [int]
+class Worker[t]
+    var data : [t]
     var size : int
     var id : int
 
-    def init(data:[int]) : unit
+    def init(data:[t]) : unit
         this.data = data
         this.size = |data|
     end
 
-    def atindex(index: int) : int
+    def atindex(index: int) : t
+        if (index > this.size-1) then
+            println("ERROR: Index out of range")
+        end
+
         this.data(index)
     end
 
     def printelements() : unit
-        var elements = ""
-        for element <- this.data do
-            elements = elements.concatenate(string_from_int(element)).concatenate(",")
-        end
-        print("worker has elements = {} size = {} \n", elements, |this.data|)
+        --for element <- this.data do
+            --this.printelement(element)
+        --     elements = elements.concatenate(string_from_int(element)).concatenate(",")
+        --end
+        println("Size {}", this.size)
+    end
+
+    def printelement(v:t -> String) : unit
+        println(v)
     end
 end
