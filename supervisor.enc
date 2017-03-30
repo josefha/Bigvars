@@ -77,7 +77,7 @@ passive class Supr[t]
         var worker = workerinfo.0
         worker ! applyto(this.windex(index,workerinfo),f)
     end
-    
+
     def applyto_unit(index:int, f : t -> unit) : unit
       var workerinfo = this.ownerinfo(index)
       var worker = workerinfo.0
@@ -88,6 +88,13 @@ passive class Supr[t]
       for worker <- this.workers do
         var w = worker.0
         w ! printelements()
+      end
+    end
+
+    def map(f : t -> t) : unit
+      for worker <- this.workers do
+        var w = worker.0
+        w ! map(f)
       end
     end
 end

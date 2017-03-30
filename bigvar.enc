@@ -47,6 +47,13 @@ passive class Bigvar[t] : BasicBigvar[t]
     end
 
     def applyto_unit(index:int, f : t -> unit) : unit
-      this.owner(index).applyto(index,f)
+      this.owner(index).applyto_unit(index,f)
+    end
+
+    def map(f : t -> t) : unit
+        for supervisorinfo <- this.supr do
+            var supr = supervisorinfo.0
+            supr.map(f)
+        end
     end
 end
