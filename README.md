@@ -8,9 +8,12 @@
    * future chaining
    * mapreduce framework
 
-### List of functions to impl:
-* toarray() -> [t]
-* atindex(int) -> t
+### List of methods:
+* toarray() : [t]
+* atindex(int) : t
+* applyto(int,f:t->t) : unit
+* map(f: t->t) : unit
+* print(f: t->s) : unit
+
+## Todo:
 * atindexes([int]) -> [t]
-* applyto(int,fun) -> unit
-* map(fun) -> unit
