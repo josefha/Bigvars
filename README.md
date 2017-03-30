@@ -17,3 +17,6 @@
 
 ## Todo:
 * atindexes([int]) -> [t]
+* insert(int, t) : unit
+* append(t) : unit 
+* remove(index) : unit
