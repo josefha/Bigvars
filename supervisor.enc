@@ -5,6 +5,7 @@ import Worker
 
 passive class Supr[t]
     var numofworkers: int
+    var size : int
     var workers : [(Worker[t],int,int)]
     var type : t
 
@@ -15,9 +16,9 @@ passive class Supr[t]
 
     -- Creating Workers and splitting the data evenly
     def split(data: [t], numofsplits: int) : [(Worker[t],int,int)]
-        var length = |data|
-        var rest = length % numofsplits
-        var splitsize = (length - rest) / numofsplits
+        this.size = |data|
+        var rest = this.size % numofsplits
+        var splitsize = (this.size  - rest) / numofsplits
 
         var splits = new [(Worker[t],int,int)](numofsplits)
         var shift = 0
@@ -47,7 +48,6 @@ passive class Supr[t]
             split(index) = data(start+index)
         end
         var worker = new Worker[t](split)
-        --println("{}:{}",start,last)
         (worker,start,last)
     end
 
@@ -78,23 +78,44 @@ passive class Supr[t]
         worker ! applyto(this.windex(index,workerinfo),f)
     end
 
-    def applyto_unit(index:int, f : t -> unit) : unit
-      var workerinfo = this.ownerinfo(index)
-      var worker = workerinfo.0
-      worker ! applyto_unit(this.windex(index,workerinfo),f)
-    end
-
-    def printworkerdata() : unit
-      for worker <- this.workers do
-        var w = worker.0
-        w ! printelements()
-      end
-    end
-
     def map(f : t -> t) : unit
       for worker <- this.workers do
         var w = worker.0
         w ! map(f)
       end
+    end
+
+    -- not the best implementation
+    def toarray() : [t]
+        var array = new[t](this.size)
+        var workerarrays = new[[t]](|this.workers|)
+        repeat i <- |this.workers| do
+            var worker = this.workers(i).0
+            workerarrays(i) =  get(worker ! toarray())
+        end
+
+        var arrayindex = 0
+        repeat w <- |workerarrays| do
+            var workerarray = workerarrays(w)
+            repeat i <- |workerarray| do
+                array(arrayindex) = workerarray(i)
+                arrayindex += 1
+            end
+        end
+        array
+    end
+
+    def printArray(f:t->String) : unit
+        var result = "["
+        var array = this.toarray()
+        repeat i <- |array| do
+            if (i != |array|-1) then
+                result = result.concatenate(f(array(i))).concatenate(",")
+            else
+                result = result.concatenate(f(array(i)))
+            end
+        end
+        result = result.concatenate("]")
+        println(result)
     end
 end

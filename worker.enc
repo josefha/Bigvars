@@ -20,31 +20,17 @@ class Worker[t]
     this.data(index)
   end
 
-  def printelements() : unit
-    --for element <- this.data do
-    --this.printelement(element)
-    --     elements = elements.concatenate(string_from_int(element)).concatenate(",")
-    --end
-    println("Size {}", this.size)
-  end
-
-  def printelement(v:t -> String) : unit
-    println(v)
-  end
-
   def applyto(index:int, f : t -> t) : unit
-    --println("running function f on index {}", index)
-
-    this.data(index) = f(this.data(index))
-  end
-
-  def applyto_unit(index:int, f : t -> unit) : unit
-    f(this.data(index))
+      this.data(index) = f(this.data(index))
   end
 
   def map(f: t->t) : unit
     repeat i <- this.size do
       this.data(i) = f(this.data(i))
     end
+  end
+
+  def toarray() : [t]
+      this.data
   end
 end

@@ -9,7 +9,8 @@
    * mapreduce framework
 
 ### List of functions to impl:
-* toarray(bigvar) -> [t]
+* toarray() -> [t]
 * atindex(int) -> t
 * atindexes([int]) -> [t]
 * applyto(int,fun) -> unit
+* map(fun) -> unit

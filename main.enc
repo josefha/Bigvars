@@ -4,52 +4,32 @@ import Bigvar
 
 class Main
     def main() : unit
-        var values = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21] --new range(1,20).to_a()
+        var values = [1,2,3,4,5,6,7,8,9,10,11,12] --new range(1,20).to_a()
         var bigvar = new Bigvar[int](values)
 
-        -- repeat i <- |values| do
-        --     var num = bigvar.atindex(i)
-        --     println("value at index {} -> {}",i,num)
-        -- end
-        --
-        -- var people_array = [new Person("Josef"),
-        --                     new Person("Erik"),
-        --                     new Person("Sahand"),
-        --                     new Person("Joel"),
-        --                     new Person("Basse")]
-        --
-        -- var people_bigvar = new Bigvar[Person](people_array)
-        --
-        -- repeat i <- people_bigvar.size() do
-        --     var person = people_bigvar.atindex(i)
-        --     println("person at index {} -> {}",i,person.name)
-        -- end
-        --
-        -- var replace = fun (p:Person) => replaceperson(p)
-        -- people_bigvar.applyto(3,replace)
-        --
-        -- repeat i <- people_bigvar.size() do
-        --   var person = people_bigvar.atindex(i)
-        --   println("person at index {} -> {}",i,person.name)
-        -- end
-
-        --fun (p : Push) => fun (x : int) => p.push(x)
-        --var printv = fun (v:int) => println(v)
-        var increase = fun(v:int) => v+1000
-        --bigvar.applyto(4,increase)
-        --println("value at index {} -> {}",4,bigvar.atindex(4))
-
+        printi(bigvar)
+        var increase = fun(v:int) => (v+100)*v
         bigvar.map(increase)
-        println("--------------")
-        repeat i <- |values| do
-            var num = bigvar.atindex(i)
-            println("value at index {} -> {}",i,num)
-        end
+        bigvar.applyto(4,fun(v:int) => v-1000)
+        printi(bigvar)
+
+        var people_array = [new Person("Josef"),
+                            new Person("Erik"),
+                            new Person("Sahand"),
+                            new Person("Joel"),
+                            new Person("Basse")]
+
+        var people = new Bigvar[Person](people_array)
+        people.applyto(3,fun(p:Person) => new Person("newperson"))
+
+        var to_string = fun(p:Person) => p.name
+        people.print(to_string)
+
     end
 end
 
-fun replaceperson(p:Person) : Person
-  new Person("newperson")
+fun printi(bigvar:Bigvar[int]) : unit
+    bigvar.print(fun(v:int) => string_from_int(v))
 end
 
 passive class Person

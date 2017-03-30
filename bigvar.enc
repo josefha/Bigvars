@@ -23,31 +23,29 @@ passive class Bigvar[t] : BasicBigvar[t]
         this.supr = [(suprvisor,0,this.size-1)]
     end
 
-    def printdata() : unit
-        for suprinfo <- this.supr do
-            var supr = suprinfo.0
-            supr.printworkerdata()
-        end
-    end
-
-    def atindex(index: int) : t
-      this.owner(index).atindex(index)
-    end
-
-    def owner(index: int) : Supr[t]
-        return this.supr(0).0
+    def first() : Supr[t]
+        this.supr(0).0
     end
 
     def size() : int
         this.size
     end
 
-    def applyto(index:int, f : t -> t) : unit
-      this.owner(index).applyto(index,f)
+    def toarray() : [t]
+        this.first().toarray()
     end
 
-    def applyto_unit(index:int, f : t -> unit) : unit
-      this.owner(index).applyto_unit(index,f)
+    def atindex(index: int) : t
+      this.owner(index).atindex(index)
+    end
+
+    -- When we have more supr change this
+    def owner(index: int) : Supr[t]
+        this.first()
+    end
+
+    def applyto(index:int, f : t -> t) : unit
+      this.owner(index).applyto(index,f)
     end
 
     def map(f : t -> t) : unit
@@ -56,4 +54,13 @@ passive class Bigvar[t] : BasicBigvar[t]
             supr.map(f)
         end
     end
+
+    def print(f: t->String) : unit
+        this.first().printArray(f)
+    end
+
+    -- def printi() : unit
+    --     var func = fun(v:t) => fun(v:int) => string_from_int(v)
+    --     this.print(func)
+    -- end
 end
