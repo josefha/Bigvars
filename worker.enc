@@ -13,11 +13,7 @@ class Worker[t]
   end
 
   def atindex(index: int) : t
-    if (index > this.size-1) then
-      println("ERROR: Index out of range")
-    end
-
-    this.data(index)
+      this.data(index)
   end
 
   def applyto(index:int, f : t -> t) : unit
