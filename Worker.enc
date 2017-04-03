@@ -60,7 +60,21 @@ class Worker[t]
               newarray(i) = this.data(oldi)
           end
           oldi +=1
+      end
 
+      this.data = newarray
+  end
+
+  def push(value:t) : unit
+      this.size = this.size + 1
+      var newarray = new[t](this.size)
+
+      repeat i <- this.size do
+          if(i == this.size-1) then
+              newarray(i) = value
+          else
+              newarray(i) = this.data(i)
+          end
       end
 
       this.data = newarray

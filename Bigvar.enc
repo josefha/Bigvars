@@ -85,6 +85,11 @@ passive class Bigvar[t] : BasicBigvar[t]
         this.size -= 1
         this.first().delete(index)
     end
+
+    def push(value: t) : unit
+        this.size = this.size + 1
+        this.first().push(value)
+    end
 end
 
 fun randombigvar(size:int, max: int) : Bigvar[int]

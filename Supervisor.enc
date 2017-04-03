@@ -148,7 +148,7 @@ passive class Supr[t]
     end
 
     def insert(index: int, value: t): unit
-        this.size = this.size +1
+        this.size += 1
         var windex = this.getindexofworkerholding(index)
 
         repeat i <- |this.workers| do
@@ -167,7 +167,7 @@ passive class Supr[t]
     end
 
     def delete(index: int): unit
-        this.size = this.size-1
+        this.size -= 1
         var windex = this.getindexofworkerholding(index)
 
         repeat i <- |this.workers| do
@@ -185,5 +185,14 @@ passive class Supr[t]
         var w = worker.0
 
         w ! delete(localindex)
+    end
+
+    def push(value: t) : unit
+        this.size += 1
+        var worker = this.workers(|this.workers|-1)
+        this.workers(|this.workers|-1) = (worker.0,worker.1,worker.2+1)
+
+        var w = worker.0
+        w ! push(value)
     end
 end
