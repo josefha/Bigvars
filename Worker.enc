@@ -1,0 +1,32 @@
+
+module Worker
+
+class Worker[t]
+  var data : [t]
+  var size : int
+  var id : int
+  var startindex : int
+
+  def init(data:[t]) : unit
+    this.data = data
+    this.size = |data|
+  end
+
+  def atindex(index: int) : t
+      this.data(index)
+  end
+
+  def applyto(index:int, f : t -> t) : unit
+      this.data(index) = f(this.data(index))
+  end
+
+  def map(f: t->t) : unit
+    repeat i <- this.size do
+      this.data(i) = f(this.data(i))
+    end
+  end
+
+  def toarray() : [t]
+      this.data
+  end
+end

@@ -1,0 +1,51 @@
+-- For testing purpose
+
+import Bigvar
+
+class Main
+    def main() : unit
+        -- var values = [1,2,3,4,5,6,7,8,9,10,11,12]
+        -- var bigvar = new Bigvar[int](values)
+        var bigvar = rangebigvar(0,20)
+
+        printi(bigvar)
+        var increase = fun(v:int) => (v+100)*v
+        bigvar.map(increase)
+        bigvar.applyto(4,fun(v:int) => v-1000)
+        printi(bigvar)
+
+        var people_array = [new Person("Josef"),
+                            new Person("Erik"),
+                            new Person("Sahand"),
+                            new Person("Joel"),
+                            new Person("Basse")]
+
+        var people = new Bigvar[Person](people_array)
+        people.applyto(3,fun(p:Person) => new Person("newperson"))
+
+        var to_string = fun(p:Person) => p.name
+        people.print(to_string)
+
+        var randombigvar = randombigvar(10,10) --zerobigvar(10)
+        printi(randombigvar)
+
+
+    end
+end
+
+fun printi(bigvar:Bigvar[int]) : unit
+    bigvar.print(fun(v:int) => string_from_int(v))
+end
+
+passive class Person
+    var name : String
+    var age : int
+    def init(name:String) : unit
+        this.name = name
+        this.age = 18
+    end
+
+    def getname() : String
+        this.name
+    end
+end
