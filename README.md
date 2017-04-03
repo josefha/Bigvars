@@ -3,6 +3,7 @@
 ### Notes:
    * future chaining
    * mapreduce framework
+   * Gustavs master thesis:
 
 ### List of methods:
 * printinfo() : unit
@@ -24,3 +25,13 @@
 ## Todo:
 * atindexes([int]) -> [t]
 * getintdata(f: t -> int) : Bigvar[int]
+
+* fold(f:): t
+* getif(f: t->Bool)
+
+## functionality
+* automate redistribution
+* different number of actors depending on size
+
+### for Bigvar[int]
+* sort() : Bigvar[int]

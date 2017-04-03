@@ -90,6 +90,10 @@ passive class Bigvar[t] : BasicBigvar[t]
         this.size = this.size + 1
         this.first().push(value)
     end
+
+    def getif(f: t->bool) : Bigvar[t]
+        new Bigvar[t](this.first().getif(f))
+    end
 end
 
 fun randombigvar(size:int, max: int) : Bigvar[int]

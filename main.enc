@@ -16,17 +16,17 @@ class Main
         bigvar.applyto(4,fun(v:int) => v-1000)
         printi(bigvar)
 
-        var people_array = [new Person("Josef"),
-                            new Person("Erik"),
-                            new Person("Sahand"),
-                            new Person("Joel"),
-                            new Person("Basse")]
+        var people_array = [new Person("Josef",21),
+                            new Person("Erik",22),
+                            new Person("Sahand",17),
+                            new Person("Joel",15),
+                            new Person("Basse",22)]
 
         var people = new Bigvar[Person](people_array)
-        people.applyto(3,fun(p:Person) => new Person("newperson"))
+        --people.applyto(3,fun(p:Person) => new Person("newperson",55))
 
-        var to_string = fun(p:Person) => p.name
-        people.print(to_string)
+        var person_to_string = fun(p:Person) => p.name
+        people.print(person_to_string)
 
         var randombigvar = randombigvar(10,10) --zerobigvar(10)
         printi(randombigvar)
@@ -35,6 +35,13 @@ class Main
         bigvarnames.insert(1,"Dave")
         bigvarnames.push("lastson")
         prints(bigvarnames)
+
+        people.print(person_to_string)
+        var over18 = people.getif(fun(p:Person) => p.age > 18)
+        people.print(person_to_string)
+
+
+
 
 
     end
@@ -51,9 +58,9 @@ end
 passive class Person
     var name : String
     var age : int
-    def init(name:String) : unit
+    def init(name:String, age:int) : unit
         this.name = name
-        this.age = 18
+        this.age = age
     end
 
     def getname() : String

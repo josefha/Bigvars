@@ -79,4 +79,22 @@ class Worker[t]
 
       this.data = newarray
   end
+
+  def getif(f: t->bool) : [t]
+      var resultsize = 0
+      repeat i <- this.size do
+          if (f(this.data(i))) then
+              resultsize += 1
+          end
+      end
+      var resultarray = new[t](resultsize)
+
+      repeat i <- this.size do
+          if (f(this.data(i))) then
+              resultarray(i) = this.data(i)
+          end
+      end
+      resultarray
+  end
+
 end

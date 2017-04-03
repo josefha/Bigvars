@@ -195,4 +195,42 @@ passive class Supr[t]
         var w = worker.0
         w ! push(value)
     end
+
+    def getif(f: t -> bool) : [t]
+
+        -- var result = new[[t]](this.numofworkers)
+        -- --
+        --
+        -- repeat i <- |this.workers| do
+        --     --workerresult = new[t](this.numofworkers)
+        --     var w = this.workers(i).0
+        --     result(i) = w ! getif(f)
+        -- end
+        --
+        -- repeat i <- |this.workers| do
+        --     var w = this.workers(i).0
+        --     get(result(i))
+        -- end
+
+        this.toarray()
+
+    end
+
+    -- var array = new[t](this.size)
+    -- var workerarrays = new[[t]](|this.workers|)
+    -- repeat i <- |this.workers| do
+    --     var worker = this.workers(i).0
+    --     workerarrays(i) =  get(worker ! toarray())
+    -- end
+    --
+    -- var arrayindex = 0
+    -- repeat w <- |workerarrays| do
+    --     var workerarray = workerarrays(w)
+    --     repeat i <- |workerarray| do
+    --         array(arrayindex) = workerarray(i)
+    --         arrayindex += 1
+    --     end
+    -- end
+    -- array
+
 end
