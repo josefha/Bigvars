@@ -72,7 +72,7 @@ passive class Bigvar[t] : BasicBigvar[t]
         this.first().printArray(f)
     end
 
-    def getStringData(f: t -> String) : Bigvar[String]
+    def getstringdata(f: t -> String) : Bigvar[String]
         new Bigvar[String](this.first().getStringData(f))
     end
 

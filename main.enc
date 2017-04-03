@@ -31,7 +31,7 @@ class Main
         var randombigvar = randombigvar(10,10) --zerobigvar(10)
         printi(randombigvar)
 
-        var bigvarnames = people.getStringData(fun(p:Person) => p.name)
+        var bigvarnames = people.getstringdata(fun(p:Person) => p.name)
         bigvarnames.insert(1,"Dave")
         bigvarnames.push("lastson")
         prints(bigvarnames)

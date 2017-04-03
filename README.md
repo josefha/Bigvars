@@ -1,22 +1,26 @@
 # bigvar implementation in Encore
 
-### Weekly Goals
-  * first prototype
-  * spec done
-
 ### Notes:
    * future chaining
    * mapreduce framework
 
 ### List of methods:
+* printinfo() : unit
 * toarray() : [t]
 * atindex(int) : t
 * applyto(int,f:t->t) : unit
 * map(f: t->t) : unit
 * print(f: t->s) : unit
+* getstringdata(f: t -> String) : Bigvar[String]
+* insert(index: int, value: t) : unit
+* delete(index: int): unit
+* push(value: t) : unit
+
+### init functions
+* randombigvar(size:int, max: int) : Bigvar[int]
+* zerobigvar(size:int) : Bigvar[int]
+* rangebigvar(l1:int, l2:int) : Bigvar[int]
 
 ## Todo:
 * atindexes([int]) -> [t]
-* insert(int, t) : unit
-* append(t) : unit 
-* remove(index) : unit
+* getintdata(f: t -> int) : Bigvar[int]
