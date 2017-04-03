@@ -29,4 +29,40 @@ class Worker[t]
   def toarray() : [t]
       this.data
   end
+
+  def insert(index: int, value: t) : unit
+      this.size = this.size + 1
+      var newarray = new[t](this.size)
+
+      var oldi = 0
+      repeat i <- this.size do
+          if(i == index) then
+              newarray(i) = value
+          else
+              newarray(i) = this.data(oldi)
+              oldi +=1
+          end
+      end
+
+      this.data = newarray
+  end
+
+  def delete(index: int) : unit
+      this.size = this.size - 1
+      var newarray = new[t](this.size)
+
+      var oldi = 0
+      repeat i <- this.size do
+          if(i == index) then
+              oldi +=1
+              newarray(i) = this.data(oldi)
+          else
+              newarray(i) = this.data(oldi)
+          end
+          oldi +=1
+
+      end
+
+      this.data = newarray
+  end
 end

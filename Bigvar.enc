@@ -38,6 +38,10 @@ passive class Bigvar[t] : BasicBigvar[t]
         this.size
     end
 
+    def printinfo() : unit
+        this.first().printinfo()
+    end
+
     def toarray() : [t]
         this.first().toarray()
     end
@@ -69,16 +73,17 @@ passive class Bigvar[t] : BasicBigvar[t]
     end
 
     def getStringData(f: t -> String) : Bigvar[String]
-        new Bigvar[String](this.first.getStringData(f))
+        new Bigvar[String](this.first().getStringData(f))
     end
 
-    -- def printi() : unit
-    --     var func = fun(v:t) => fun(v:int) => string_from_int(v)
-    --     this.print(func)
-    -- end
-
     def insert(index: int, value: t): unit
+        this.size = this.size + 1
         this.first().insert(index,value)
+    end
+
+    def delete(index: int): unit
+        this.size -= 1
+        this.first().delete(index)
     end
 end
 
