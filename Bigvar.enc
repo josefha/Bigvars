@@ -104,6 +104,14 @@ fun zerobigvar(size:int) : Bigvar[int]
     new Bigvar[int](values)
 end
 
+fun onesbigvar(size:int) : Bigvar[int]
+    var values = new[int](size)
+    repeat i <- size do
+        values(i) = 1
+    end
+    new Bigvar[int](values)
+end
+
 fun rangebigvar(l1:int, l2:int) : Bigvar[int]
     var values = new[int](l2-l1)
     var counter = 0

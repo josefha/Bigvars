@@ -28,10 +28,10 @@ class Main
         over18.delete(0)
         over18.print(person_to_string)
 
-        var bigvarnames = people.getstringdata(fun(p:Person) => p.name)
-        bigvarnames.insert(1,"Dave")
-        bigvarnames.push("Tobias")
-        prints(bigvarnames)
+        var names = people.getstringdata(fun(p:Person) => p.getname())
+        names.insert(1,"Dave")
+        names.push("Tobias")
+        prints(names)
 
     end
 end
