@@ -91,8 +91,8 @@ passive class Bigvar[t] : BasicBigvar[t]
         this.first().push(value)
     end
 
-    def getif(f: t->bool) : Bigvar[t]
-        new Bigvar[t](this.first().getif(f))
+    def filter(f: t->bool) : Bigvar[t]
+        new Bigvar[t](this.first().filter(f))
     end
 end
 

@@ -196,41 +196,33 @@ passive class Supr[t]
         w ! push(value)
     end
 
-    def getif(f: t -> bool) : [t]
+    def filter(f: t -> bool) : [t]
+        var result = new[Fut[[t]]](this.numofworkers)
 
-        -- var result = new[[t]](this.numofworkers)
-        -- --
-        --
-        -- repeat i <- |this.workers| do
-        --     --workerresult = new[t](this.numofworkers)
-        --     var w = this.workers(i).0
-        --     result(i) = w ! getif(f)
-        -- end
-        --
-        -- repeat i <- |this.workers| do
-        --     var w = this.workers(i).0
-        --     get(result(i))
-        -- end
+        repeat i <- this.numofworkers do
+            var w = this.workers(i).0
+            result(i) = w ! filter(f)
+        end
 
-        this.toarray()
+        var totalsize = 0
+        var workerresult = new[[t]](|this.workers|)
+        repeat i <- |this.workers| do
+            workerresult(i) = get(result(i))
+            totalsize += |workerresult(i)|
+        end
 
+        var finalresult = new[t](totalsize)
+        var arrayindex = 0
+        repeat w <- |workerresult| do
+            var workerarray = workerresult(w)
+            var innercount = 0
+            repeat i <- |workerarray| do
+                innercount += 1
+                finalresult(arrayindex) = workerarray(i)
+                arrayindex += 1
+            end
+        end
+
+        finalresult
     end
-
-    -- var array = new[t](this.size)
-    -- var workerarrays = new[[t]](|this.workers|)
-    -- repeat i <- |this.workers| do
-    --     var worker = this.workers(i).0
-    --     workerarrays(i) =  get(worker ! toarray())
-    -- end
-    --
-    -- var arrayindex = 0
-    -- repeat w <- |workerarrays| do
-    --     var workerarray = workerarrays(w)
-    --     repeat i <- |workerarray| do
-    --         array(arrayindex) = workerarray(i)
-    --         arrayindex += 1
-    --     end
-    -- end
-    -- array
-
 end

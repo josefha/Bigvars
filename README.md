@@ -10,12 +10,13 @@
 * toarray() : [t]
 * atindex(int) : t
 * applyto(int,f:t->t) : unit
-* map(f: t->t) : unit
 * print(f: t->s) : unit
-* getstringdata(f: t -> String) : Bigvar[String]
 * insert(index: int, value: t) : unit
 * delete(index: int): unit
 * push(value: t) : unit
+* getstringdata(f: t -> String) : Bigvar[String]
+* map(f: t->t) : unit
+* filter(f: t->Bool) -> Bigvar[t]
 
 ### init functions
 * randombigvar(size:int, max: int) : Bigvar[int]
@@ -25,9 +26,7 @@
 ## Todo:
 * atindexes([int]) -> [t]
 * getintdata(f: t -> int) : Bigvar[int]
-
 * fold(f:): t
-* getif(f: t->Bool)
 
 ## functionality
 * automate redistribution

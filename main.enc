@@ -4,17 +4,15 @@ import Bigvar
 
 class Main
     def main() : unit
-        -- var values = [1,2,3,4,5,6,7,8,9,10,11,12]
-        -- var bigvar = new Bigvar[int](values)
-        var bigvar = rangebigvar(0,20)
-        bigvar.push(20)
+        var bigvar = randombigvar(20,30)
+        bigvar.push(25)
 
         printi(bigvar)
+        var result = bigvar.filter(fun(v:int) => v > 18)
+        result.map(fun(v:int) => (v*4))
+        result.applyto(result.size()-1,fun(v:int) => v-100)
 
-        var increase = fun(v:int) => (v+100)
-        bigvar.map(increase)
-        bigvar.applyto(4,fun(v:int) => v-1000)
-        printi(bigvar)
+        printi(result)
 
         var people_array = [new Person("Josef",21),
                             new Person("Erik",22),
@@ -23,26 +21,17 @@ class Main
                             new Person("Basse",22)]
 
         var people = new Bigvar[Person](people_array)
-        --people.applyto(3,fun(p:Person) => new Person("newperson",55))
-
         var person_to_string = fun(p:Person) => p.name
-        people.print(person_to_string)
 
-        var randombigvar = randombigvar(10,10) --zerobigvar(10)
-        printi(randombigvar)
+        people.print(person_to_string)
+        var over18 = people.filter(fun(p:Person) => p.age > 18)
+        over18.delete(0)
+        over18.print(person_to_string)
 
         var bigvarnames = people.getstringdata(fun(p:Person) => p.name)
         bigvarnames.insert(1,"Dave")
-        bigvarnames.push("lastson")
+        bigvarnames.push("Tobias")
         prints(bigvarnames)
-
-        people.print(person_to_string)
-        var over18 = people.getif(fun(p:Person) => p.age > 18)
-        people.print(person_to_string)
-
-
-
-
 
     end
 end
