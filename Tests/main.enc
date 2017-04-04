@@ -9,8 +9,10 @@ class Main
 
         printi(bigvar)
         var result = bigvar.filter(fun(v:int) => v > 18)
-        result.map(fun(v:int) => (v*4))
+        result.update(fun(v:int) => (v*4))
         result.applyto(result.size()-1,fun(v:int) => v-100)
+
+        result.array()
 
         printi(result)
 

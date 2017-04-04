@@ -1,6 +1,7 @@
 bigvar
-main
+/Test/main
 .DS_Store
 .#*
 \#*#
 *~
+*.DS_Store

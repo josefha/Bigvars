@@ -4,6 +4,8 @@
    * future chaining
    * mapreduce framework
    * Gustavs master thesis:
+   * Mining of massive datasets: book.
+   * Language framework Spark. 
 
 ### List of methods:
 * printinfo() : unit
@@ -34,3 +36,5 @@
 
 ### for Bigvar[int]
 * sort() : Bigvar[int]
+
+### notes:

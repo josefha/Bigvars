@@ -4,30 +4,43 @@ module Worker
 class Worker[t]
   var data : [t]
   var size : int
-  var id : int
-  var startindex : int
 
   def init(data:[t]) : unit
     this.data = data
     this.size = |data|
   end
 
-  def atindex(index: int) : t
+  def array() : [t]
+      this.data
+  end
+
+  def at(index: int) : t
       this.data(index)
   end
 
-  def applyto(index:int, f : t -> t) : unit
-      this.data(index) = f(this.data(index))
-  end
-
-  def map(f: t->t) : unit
+  def update(f: t->t) : unit
     repeat i <- this.size do
       this.data(i) = f(this.data(i))
     end
   end
 
-  def toarray() : [t]
-      this.data
+  def filter(f: t->bool) : [t]
+      var resultsize = 0
+      repeat i <- this.size do
+          if (f(this.data(i))) then
+              resultsize += 1
+          end
+      end
+
+      var resultarray = new[t](resultsize)
+      var resultindex = 0
+      repeat i <- this.size do
+          if (f(this.data(i))) then
+              resultarray(resultindex) = this.data(i)
+              resultindex += 1
+          end
+      end
+      resultarray
   end
 
   def insert(index: int, value: t) : unit
@@ -80,23 +93,8 @@ class Worker[t]
       this.data = newarray
   end
 
-  def filter(f: t->bool) : [t]
-      var resultsize = 0
-      repeat i <- this.size do
-          if (f(this.data(i))) then
-              resultsize += 1
-          end
-      end
-
-      var resultarray = new[t](resultsize)
-      var resultindex = 0
-      repeat i <- this.size do
-          if (f(this.data(i))) then
-              resultarray(resultindex) = this.data(i)
-              resultindex += 1
-          end
-      end
-      resultarray
+  def applyto(index:int, f : t -> t) : unit
+      this.data(index) = f(this.data(index))
   end
 
 end
