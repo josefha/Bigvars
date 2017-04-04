@@ -4,15 +4,7 @@ module Bigvar
 import Supervisor
 import Random
 
-trait BasicBigvar[t]
-    require var size : int
-
-    def createbigvar(array:[t]) : Bigvar[t]
-        new Bigvar[t](array)
-    end
-end
-
-passive class Bigvar[t] : BasicBigvar[t]
+passive class Bigvar[t]
     var size : int
     var numsupr : int
     var supr : [(Supr[t],int,int)]
