@@ -4,13 +4,26 @@ module Bighash
 
 import Supervisorh
 
-passive class Bighash[key,value]
-    var size : int
-    var supervisors : [(Supervisor[key,value],int,int)]
+passive class Bighash[k,v]
+    var supervisor : Supervisor[k,v]
 
     def init() : unit
-        this.size = 0
-        var suprvisor = new Supervisor[key,value]()
-        this.supervisors = [(suprvisor,0,0)]
+        this.supervisor = new Supervisor[k,v]()
     end
+
+    def put(key:k,value:v) : unit
+        this.supervisor.put(key,value)
+    end
+
+    -- def get(key:K) : V
+    --
+    -- end
+
+    def remove(key:k) : unit
+        print("")
+    end
+
+    -- def values() : Bigvar[V]
+    --
+    -- end
 end

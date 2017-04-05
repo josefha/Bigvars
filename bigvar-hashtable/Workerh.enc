@@ -1,12 +1,31 @@
 
 module Workerh
 
-class Worker[key,value]
-    var data : [key]
-    var size : int
+import HashTable
 
-    def init() : unit
-        --this.data
-        this.size = 0
+class Worker[k,v]
+    var tableSize : int
+    var table : [HashEntry[k,v]]
+
+    def init(size: int) : unit
+        this.tableSize = size
+        this.initTable()
+    end
+
+    def initTable() : unit
+        var table = new [HashEntry[k,v]](this.tableSize)
+        repeat i <- this.tableSize do
+            table(i) = new HashEntry[k,v]()
+        end
+    end
+
+    def put(key:k,value:v,generatedHash:int) : unit
+        var hash = generatedHash % this.tableSize
+        var hashentry = this.table(hash)
+        while ((hashentry.notEmpty()) && (hashentry.getKey() != key)) do
+            hash = (hash+1) % this.tableSize
+            hashentry = this.table(hash)
+        end
+        this.table(hash).add(key,value)
     end
 end

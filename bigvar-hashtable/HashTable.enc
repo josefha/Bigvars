@@ -1,0 +1,30 @@
+
+module HashTable
+
+passive class HashEntry[k,v]
+    var key : k
+    var value : v
+    var active : bool
+
+    def init() : unit
+        this.active = false
+    end
+
+    def add(key:k,value:v) : unit
+        this.active = true
+        this.key = key
+        this.value = value
+    end
+
+    def notEmpty() : bool
+        this.active
+    end
+
+    def getKey() : k
+        this.key
+    end
+
+    def getValues() : v
+        this.value
+    end
+end

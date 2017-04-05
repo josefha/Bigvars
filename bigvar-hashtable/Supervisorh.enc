@@ -2,19 +2,40 @@
 
 module Supervisorh
 
+import HashTable
 import Workerh
 
-passive class Supervisor[key,value]
-    var size : int
+passive class Supervisor[k,v]
     var numOfWorkers: int
-    var workers : [(Worker[key,value],int,int)]
+    var workers : [(Worker[k,v])]
+    var tableSize : int
+    var idCounter : int
 
     def init() : unit
         this.numOfWorkers = 4
-        --this.workers = --this.distributeArray(data)
+        this.tableSize = 128*this.numOfWorkers
+        this.idCounter = 0
+        this.initTable()
     end
 
-    def distributeHash() : unit
-        print("")
+    def initTable() : unit
+        repeat i <- this.numOfWorkers do
+            this.workers(i) = new Worker[k,v](this.tableSize/this.numOfWorkers)
+        end
     end
+
+    def generateHash(key:k) : int
+        this.idCounter += 1
+        this.idCounter
+    end
+
+    def put(key:k,value:v) : unit
+        var hash = this.generateHash(key)
+        var workerID = hash % this.numOfWorkers
+        this.workers(workerID) ! put(key,value,hash/this.numOfWorkers)
+    end
+
+    -- def get(key:K) : V
+    --
+    -- end
 end
