@@ -1,0 +1,12 @@
+
+module Workerh
+
+class Worker[key,value]
+    var data : [key]
+    var size : int
+
+    def init() : unit
+        --this.data
+        this.size = 0
+    end
+end

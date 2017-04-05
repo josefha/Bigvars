@@ -1,0 +1,11 @@
+
+import Bighash
+
+
+class Main
+    def main() : unit
+        println("Hello bighash")
+
+        var hashtable = new Bighash[int, String]()
+    end
+end

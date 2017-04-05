@@ -1,0 +1,16 @@
+
+
+module Bighash
+
+import Supervisorh
+
+passive class Bighash[key,value]
+    var size : int
+    var supervisors : [(Supervisor[key,value],int,int)]
+
+    def init() : unit
+        this.size = 0
+        var suprvisor = new Supervisor[key,value]()
+        this.supervisors = [(suprvisor,0,0)]
+    end
+end

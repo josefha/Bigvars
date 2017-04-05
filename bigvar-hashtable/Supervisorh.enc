@@ -1,0 +1,20 @@
+
+
+module Supervisorh
+
+import Workerh
+
+passive class Supervisor[key,value]
+    var size : int
+    var numOfWorkers: int
+    var workers : [(Worker[key,value],int,int)]
+
+    def init() : unit
+        this.numOfWorkers = 4
+        --this.workers = --this.distributeArray(data)
+    end
+
+    def distributeHash() : unit
+        print("")
+    end
+end
