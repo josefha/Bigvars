@@ -4,7 +4,7 @@ module Bighash
 
 import Supervisorh
 
-passive class Bighash[k,v]
+local class Bighash[k,v]
     var supervisor : Supervisor[k,v]
 
     def init() : unit

@@ -2,7 +2,7 @@
 import Bighash
 
 
-class Main
+active class Main
     def main() : unit
         println("Hello bighash")
 

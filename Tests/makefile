@@ -1,3 +1,2 @@
 all:
-	encorec -I ../bigvar-array/ main.enc
-	./main
+	encorec -I ../bigvar-array/ --run main.enc 

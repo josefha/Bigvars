@@ -1,23 +1,23 @@
 
 module HashTable
 
-passive class HashEntry[k,v]
+local class HashEntry[k,v]
     var key : k
     var value : v
-    var active : bool
+    var hasEntry : bool
 
     def init() : unit
-        this.active = false
+        this.hasEntry = false
     end
 
     def add(key:k,value:v) : unit
-        this.active = true
+        this.hasEntry = true
         this.key = key
         this.value = value
     end
 
     def notEmpty() : bool
-        this.active
+        this.hasEntry
     end
 
     def getKey() : k

@@ -3,7 +3,7 @@ module Workerh
 
 import HashTable
 
-class Worker[k,v]
+active class Worker[k,v]
     var tableSize : int
     var table : [HashEntry[k,v]]
 

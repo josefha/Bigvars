@@ -2,7 +2,7 @@
 
 import Bigvar
 
-class Main
+active class Main
     def main() : unit
         var bigvar = randombigvar(20,30)
         bigvar.push(25)
@@ -46,9 +46,9 @@ fun prints(bigvar:Bigvar[String]) : unit
     bigvar.print(fun(v:String) => v)
 end
 
-passive class Person
-    var name : String
-    var age : int
+read class Person
+    val name : String
+    val age : int
     def init(name:String, age:int) : unit
         this.name = name
         this.age = age

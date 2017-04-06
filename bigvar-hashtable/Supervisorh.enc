@@ -2,11 +2,11 @@
 
 module Supervisorh
 
-import Siphash
+--import Siphash
 import HashTable
 import Workerh
 
-passive class Supervisor[k,v]
+local class Supervisor[k,v]
     var numOfWorkers: int
     var workers : [(Worker[k,v])]
     var tableSize : int

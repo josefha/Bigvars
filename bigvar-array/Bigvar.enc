@@ -4,7 +4,7 @@ module Bigvar
 import Supervisor
 import Random
 
-passive class Bigvar[t]
+local class Bigvar[t]
     var size : int
     var supervisors : [(Supr[t],int,int)]
 
@@ -26,7 +26,7 @@ passive class Bigvar[t]
         this.supr().array()
     end
 
-    --def redistribute() : 
+    --def redistribute() :
 
     def update(f : t -> t) : unit
         this.supr().update(f)

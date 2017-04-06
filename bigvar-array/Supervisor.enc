@@ -3,7 +3,7 @@ module Supervisor
 
 import Worker
 
-passive class Supr[t]
+local class Supr[t]
     var size : int
     var numOfWorkers: int
     var workers : [(Worker[t],int,int)]

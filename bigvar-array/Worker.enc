@@ -1,7 +1,7 @@
 
 module Worker
 
-class Worker[t]
+active class Worker[t]
   var data : [t]
   var size : int
 
