@@ -1,9 +1,10 @@
 
-module HashTable
+module HashEntry
 
 local class HashEntry[k,v]
     var key : k
     var value : v
+    var hash : uint
     var hasEntry : bool
 
     def init() : unit

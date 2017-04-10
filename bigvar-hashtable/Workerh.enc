@@ -1,7 +1,7 @@
 
 module Workerh
 
-import HashTable
+import HashEntry
 
 active class Worker[k,v]
     var tableSize : int
@@ -27,5 +27,9 @@ active class Worker[k,v]
             hashentry = this.table(hash)
         end
         this.table(hash).add(key,value)
+    end
+
+    def returntable() : [HashEntry[k,v]]
+        this.table
     end
 end

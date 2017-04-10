@@ -1,9 +1,15 @@
 # Journal - Josef
 
-Weekly goals:
-  - spec done
-  - first prototype done
+### Thursday 13/3
+### Wednesday 12/3
+### Tuesday 11/03
 
+### Monday 10/4
+  * Started with the report
+  * Parts of intro and background is done
+### Friday 7/3
+  * Pulled Kappa and changed my code to support it.
+  * got hashtable files to work with my code
 ### Thursday 6/3
   * Encore meeting
   * got code to generate hashes from Elias (had problem to get it to work)

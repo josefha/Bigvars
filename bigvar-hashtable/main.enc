@@ -5,7 +5,45 @@ import Bighash
 active class Main
     def main() : unit
         println("Hello bighash")
+        var p = new Person()
 
-        var hashtable = new Bighash[int, String]()
+
+        var hashtable = new Bighash[String, int]()
+        --hashtable.put("key1",11)
+
+        println("end")
+
+        --var pointer: uint = p
+
+        --var hashtable = new Bighash[int, String]()
+        --var hasher = new Siphash() --hasher
+        -- var hashentry = new HashEntry[String,int]()
+        -- hashentry.add("555",500)
+        --
+        -- var str = "asd"
+        -- var hash:uint = hashentry.gethash(str)
+        -- println(hash)
+        --val key = hasher.hash(pointer)
+
+        -- println("Pointer = {}", pointer)
+        -- println("hash = {}", key)
+        --
+        -- val pointer2 =
+        --     EMBED (uint)
+        --     unsigned long long x = #{z};
+        --     x;
+        --     END
+        -- val key2 = hasher.hash(pointer2)
+        -- val key3 = hasher.hash(pointer2)
+        --
+        -- println("Pointer = {}", pointer2)
+        -- println("hash = {}", key2)
+        -- println("hash = {}", key3)
+    end
+end
+
+local class Person
+    def hello() : unit
+        print("hello world")
     end
 end

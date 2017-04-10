@@ -2,17 +2,30 @@
 
 module Supervisorh
 
---import Siphash
-import HashTable
+import Siphash
+import HashEntry
 import Workerh
+
+trait GererateHash
+  def modulo(value : uint, mod : uint) : uint
+    EMBED (uint)
+      uint64_t value = (uint64_t) #{value};
+            uint64_t mod   = (uint64_t) #{mod};
+            (value % mod);
+    END
+  end
+end
+
 
 local class Supervisor[k,v]
     var numOfWorkers: int
     var workers : [(Worker[k,v])]
     var tableSize : int
     var idCounter : int
+    var hasher: Siphash
 
     def init() : unit
+        --this.hasher = new Siphash()
         this.numOfWorkers = 4
         this.tableSize = 128*this.numOfWorkers
         this.idCounter = 0
@@ -25,18 +38,20 @@ local class Supervisor[k,v]
         end
     end
 
-    def generateHash(key:k) : int
-        this.idCounter += 1
-        this.idCounter
+    def generateHash(key:k) : uint
+        val pointer = EMBED (uint) uint64_t x = (uint64_t) #{key}.p; x; END
+        --unsigned long long x = #{key}.i; x; END
+        --println(pointer)
+        --this.hasher.hash(pointer)
+
     end
 
     def put(key:k,value:v) : unit
+        print("put")
         var hash = this.generateHash(key)
+        println(hash)
         var workerID = hash % this.numOfWorkers
         this.workers(workerID) ! put(key,value,hash/this.numOfWorkers)
     end
 
-    -- def get(key:K) : V
-    --
-    -- end
 end

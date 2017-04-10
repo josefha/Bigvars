@@ -1,6 +1,7 @@
 -- This file was automatically converted by encorec
 
 module Hasher
+
 trait Hasher
   require def hash(id : uint) : uint
   def modulo(value : uint, mod : uint) : uint
