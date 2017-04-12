@@ -20,7 +20,7 @@ local class Bighash[k,v]
     end
 
     def remove(key:k) : unit
-        print("")
+        ()
     end
 
     def getMany(keys:[k]) : [v]
@@ -31,7 +31,23 @@ local class Bighash[k,v]
         this.supervisor.elements()
     end
 
-    def keys() : [k]
+    def keys() : [k ]
         this.supervisor.keys()
+    end
+
+    def rehash() : unit
+        ()
+    end
+
+    def clear() : unit
+        ()
+    end
+
+    def contains(value:v) : unit
+        ()
+    end
+
+    def getInfo() : unit
+        this.supervisor.getInfo()
     end
 end

@@ -4,8 +4,6 @@ import Bighash
 
 active class Main
     def main() : unit
-        println("Hello bighash")
-
         var hashtable = new Bighash[String, int]()
 
         var key1 = "key123"
@@ -21,15 +19,21 @@ active class Main
         hashtable.put(222,p2)
         hashtable.put(333,p3)
 
-        var people = hashtable.elements()
-        var keys = hashtable.keys()
+        var i = 0
+        while i < 900 do
+            hashtable.put(i,p3)
+            i += 2
+        end
 
+        hashtable.getInfo()
+
+        -- var people = hashtable.elements()
+        -- var keys = hashtable.keys()
         --var people = new[Person](3)
         --people = hashtable.getMany([111,222,333])
-
-        for person <- people do
-            println(person.getname())
-        end
+        -- for person <- people do
+        --     println(person.getname())
+        -- end
 
     end
 end

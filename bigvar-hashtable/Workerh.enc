@@ -24,20 +24,27 @@ active class Worker[k,v]
         end
     end
 
+    def getInfo() : int
+        println("w: {} has: {}/{}", this.id, this.numberOfElements, this.tableSize)
+        this.numberOfElements
+    end
+
     def put(key:k,value:v,generatedHash:uint) : unit
+        if (((this.numberOfElements+1)/this.tableSize) >= 0.7) then
+            this.doubleSize()
+        end
+
         var hash = (generatedHash) % this.tableSize
         var hashentry = this.table(hash)
         while ((hashentry.notEmpty()) && (hashentry.getKey() != key)) do
             hash = (hash+1) % this.tableSize
             hashentry = this.table(hash)
-            println("collision")
+            --println("collision")
         end
 
         if (hashentry.getKey() != key) then
             this.numberOfElements += 1
         end
-
-        println("w: {} hash: {}", this.id, hash)
         this.table(hash).add(key,value)
     end
 
@@ -69,5 +76,19 @@ active class Worker[k,v]
             end
         end
         result
+    end
+
+    def doubleSize() : unit
+        this.tableSize = this.tableSize*2
+        var newTable = new [HashEntry[k,v]](this.tableSize)
+
+        repeat i <- this.tableSize/2 do
+            newTable(i) = this.table(i)
+        end
+
+        repeat i <- this.tableSize/2 do
+            newTable(this.tableSize/2+i) = new HashEntry[k,v]()
+        end
+        this.table = newTable
     end
 end

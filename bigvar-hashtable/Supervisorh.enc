@@ -20,20 +20,22 @@ end
 local class Supervisor[k,v]
     var numOfWorkers: int
     var workers : [(Worker[k,v])]
+    var workerSize : int
     var tableSize : int
     var siphash: Siphash
 
     def init() : unit
-        this.siphash = new Siphash()
+        this.workerSize = 128
         this.numOfWorkers = 4
+        this.tableSize = this.workerSize*this.numOfWorkers
+        this.siphash = new Siphash()
         this.workers = new[Worker[k,v]](this.numOfWorkers)
-        this.tableSize = 128*this.numOfWorkers
         this.initTable()
     end
 
     def initTable() : unit
         repeat i <- this.numOfWorkers do
-            this.workers(i) = new Worker[k,v](129,i)
+            this.workers(i) = new Worker[k,v](this.workerSize,i)
         end
     end
 
@@ -118,4 +120,21 @@ local class Supervisor[k,v]
         result
     end
 
+    def doubleSize() : unit
+        this.workerSize = this.workerSize*2
+        this.tableSize = this.workerSize*this.numOfWorkers
+
+        for worker <- this.workers do
+            worker ! doubleSize()
+        end
+
+    end
+
+    def getInfo() : unit
+        var totalSize = 0
+        for worker <- this.workers do
+            totalSize += get(worker ! getInfo())
+        end
+        --println("Total Size: {}/{}", totalSize, this.tableSize)
+    end
 end
