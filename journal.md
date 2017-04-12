@@ -2,8 +2,10 @@
 
 ### Thursday 13/3
 ### Wednesday 12/3
+  * Wrote little on the background
 ### Tuesday 11/03
-
+  * Read some others thesis
+  * Had an interview for a job that took some time.
 ### Monday 10/4
   * Started with the report
   * Parts of intro and background is done

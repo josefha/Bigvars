@@ -2,31 +2,44 @@
 module Workerh
 
 import HashEntry
+import Hasher
 
 active class Worker[k,v]
+    var id : int
     var tableSize : int
+    var numberOfElements: int
     var table : [HashEntry[k,v]]
 
-    def init(size: int) : unit
+    def init(size: int, id:int) : unit
         this.tableSize = size
+        this.id = id
         this.initTable()
     end
 
     def initTable() : unit
-        var table = new [HashEntry[k,v]](this.tableSize)
+        this.table = new [HashEntry[k,v]](this.tableSize)
         repeat i <- this.tableSize do
-            table(i) = new HashEntry[k,v]()
+            this.table(i) = new HashEntry[k,v]()
         end
     end
 
-    def put(key:k,value:v,generatedHash:int) : unit
-        var hash = generatedHash % this.tableSize
+    def put(key:k,value:v,generatedHash:uint) : unit
+        var hash = (generatedHash) % this.tableSize
         var hashentry = this.table(hash)
         while ((hashentry.notEmpty()) && (hashentry.getKey() != key)) do
             hash = (hash+1) % this.tableSize
             hashentry = this.table(hash)
+            println("collision")
         end
+        println("w: {} hash: {}", this.id, hash)
         this.table(hash).add(key,value)
+    end
+
+    def get(key:k,generatedHash:uint) : v
+        var hash = (generatedHash) % this.tableSize
+        var hashentry = this.table(hash)
+        var value = hashentry.getValue()
+        value
     end
 
     def returntable() : [HashEntry[k,v]]

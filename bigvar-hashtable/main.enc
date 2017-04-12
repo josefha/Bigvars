@@ -5,45 +5,33 @@ import Bighash
 active class Main
     def main() : unit
         println("Hello bighash")
-        var p = new Person()
-
 
         var hashtable = new Bighash[String, int]()
-        --hashtable.put("key1",11)
 
-        println("end")
+        var key1 = "key123"
+        hashtable.put(key1,11111)
+        hashtable.put(key1,22222)
+        println("key1 value = {}",hashtable.get(key1))
 
-        --var pointer: uint = p
+        var p1 = new Person("Josef",21)
+        var p2 = new Person("Sahand",17)
+        var hashtable = new Bighash[int,Person]()
+        hashtable.put(111,p1)
+        hashtable.put(123213,p2)
+        println("value = {}",hashtable.get(123213).getname())
 
-        --var hashtable = new Bighash[int, String]()
-        --var hasher = new Siphash() --hasher
-        -- var hashentry = new HashEntry[String,int]()
-        -- hashentry.add("555",500)
-        --
-        -- var str = "asd"
-        -- var hash:uint = hashentry.gethash(str)
-        -- println(hash)
-        --val key = hasher.hash(pointer)
-
-        -- println("Pointer = {}", pointer)
-        -- println("hash = {}", key)
-        --
-        -- val pointer2 =
-        --     EMBED (uint)
-        --     unsigned long long x = #{z};
-        --     x;
-        --     END
-        -- val key2 = hasher.hash(pointer2)
-        -- val key3 = hasher.hash(pointer2)
-        --
-        -- println("Pointer = {}", pointer2)
-        -- println("hash = {}", key2)
-        -- println("hash = {}", key3)
     end
 end
 
-local class Person
-    def hello() : unit
-        print("hello world")
+read class Person
+    val name : String
+    val age : int
+    def init(name:String, age:int) : unit
+        this.name = name
+        this.age = age
+    end
+
+    def getname() : String
+        this.name
     end
 end

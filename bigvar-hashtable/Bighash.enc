@@ -12,18 +12,14 @@ local class Bighash[k,v]
     end
 
     def put(key:k,value:v) : unit
-        this.supervisor.put(key,value)
+        get(this.supervisor.put(key,value))
     end
 
-    -- def get(key:K) : V
-    --
-    -- end
+    def get(key:k) : v
+        this.supervisor.get(key)
+    end
 
     def remove(key:k) : unit
         print("")
     end
-
-    -- def values() : Bigvar[V]
-    --
-    -- end
 end

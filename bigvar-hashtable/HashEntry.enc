@@ -4,7 +4,6 @@ module HashEntry
 local class HashEntry[k,v]
     var key : k
     var value : v
-    var hash : uint
     var hasEntry : bool
 
     def init() : unit
@@ -25,7 +24,7 @@ local class HashEntry[k,v]
         this.key
     end
 
-    def getValues() : v
+    def getValue() : v
         this.value
     end
 end

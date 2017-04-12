@@ -9,7 +9,6 @@ trait Hasher
       uint64_t value = (uint64_t) #{value};
             uint64_t mod   = (uint64_t) #{mod};
             (value % mod);
-
     END
   end
 end
