@@ -1,8 +1,10 @@
 # Journal - Josef
 
 ### Thursday 13/3
+
 ### Wednesday 12/3
   * Wrote little on the background
+  * much improvments on hashtable 
 ### Tuesday 11/03
   * Read some others thesis
   * Had an interview for a job that took some time.

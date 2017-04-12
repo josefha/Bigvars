@@ -29,6 +29,9 @@
 * put(k,v) : unit
 * get(k) : v
 * getMany([k]) : [v]
+* keys() : [k]
+* values() : [v]
+* getInfo() : unit
 
 ## Todo arrays:
 * atindexes([int]) -> [t]
