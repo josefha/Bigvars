@@ -58,4 +58,16 @@ active class Worker[k,v]
         end
         result
     end
+
+    def keys() : [k]
+        var result = new [k](this.numberOfElements)
+        var index = 0
+        repeat i <- this.tableSize do
+            if this.table(i).notEmpty() then
+                result(index) = this.table(i).getKey()
+                index += 1
+            end
+        end
+        result
+    end
 end

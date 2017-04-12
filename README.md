@@ -25,7 +25,12 @@
 * onesbigvar(size:int) : Bigvar[int]
 * rangebigvar(l1:int, l2:int) : Bigvar[int]
 
-## Todo:
+### List of methods for Prototype 1 for HashTable:
+* put(k,v) : unit
+* get(k) : v
+* getMany([k]) : [v]
+
+## Todo arrays:
 * atindexes([int]) -> [t]
 * getintdata(f: t -> int) : Bigvar[int]
 * fold(): t

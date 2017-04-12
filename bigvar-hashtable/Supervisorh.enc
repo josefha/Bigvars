@@ -71,7 +71,6 @@ local class Supervisor[k,v]
     end
 
     def elements() : [v]
-
         var workerdata = new[Fut[[v]]](this.numOfWorkers)
         repeat i <- this.numOfWorkers do
             workerdata(i) = this.workers(i) ! elements()
@@ -85,6 +84,30 @@ local class Supervisor[k,v]
         end
 
         var result = new[v](totalSize)
+        var index = 0
+        for worker <- workerdataResult do
+            for element <- worker do
+                result(index) = element
+                index += 1
+            end
+        end
+        result
+    end
+
+    def keys() : [k]
+        var workerdata = new[Fut[[k]]](this.numOfWorkers)
+        repeat i <- this.numOfWorkers do
+            workerdata(i) = this.workers(i) ! keys()
+        end
+
+        var totalSize = 0
+        var workerdataResult = new[[k]](this.numOfWorkers)
+        repeat i <- this.numOfWorkers do
+            workerdataResult(i) = get(workerdata(i))
+            totalSize += |workerdataResult(i)|
+        end
+
+        var result = new[k](totalSize)
         var index = 0
         for worker <- workerdataResult do
             for element <- worker do

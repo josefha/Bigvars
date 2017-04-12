@@ -22,6 +22,7 @@ active class Main
         hashtable.put(333,p3)
 
         var people = hashtable.elements()
+        var keys = hashtable.keys()
 
         --var people = new[Person](3)
         --people = hashtable.getMany([111,222,333])

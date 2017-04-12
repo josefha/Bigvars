@@ -30,4 +30,8 @@ local class Bighash[k,v]
     def elements() : [v]
         this.supervisor.elements()
     end
+
+    def keys() : [k]
+        this.supervisor.keys()
+    end
 end
