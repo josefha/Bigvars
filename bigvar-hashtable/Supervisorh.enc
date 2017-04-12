@@ -21,7 +21,6 @@ local class Supervisor[k,v]
     var numOfWorkers: int
     var workers : [(Worker[k,v])]
     var tableSize : int
-    var idCounter : int
     var siphash: Siphash
 
     def init() : unit
@@ -29,7 +28,6 @@ local class Supervisor[k,v]
         this.numOfWorkers = 4
         this.workers = new[Worker[k,v]](this.numOfWorkers)
         this.tableSize = 128*this.numOfWorkers
-        this.idCounter = 0
         this.initTable()
     end
 
@@ -54,8 +52,7 @@ local class Supervisor[k,v]
     def get(key:k) : v
         var hash = this.generateHash(key)
         var workerID = hash % this.numOfWorkers
-        var value = get(this.workers(workerID) ! get(key,hash))
-        value
+        get(this.workers(workerID) ! get(key,hash))
     end
 
     def getMany(keys:[k]) : [v]
@@ -71,6 +68,31 @@ local class Supervisor[k,v]
             returnValues(i) = get(values(i))
         end
         returnValues
+    end
+
+    def elements() : [v]
+
+        var workerdata = new[Fut[[v]]](this.numOfWorkers)
+        repeat i <- this.numOfWorkers do
+            workerdata(i) = this.workers(i) ! elements()
+        end
+
+        var totalSize = 0
+        var workerdataResult = new[[v]](this.numOfWorkers)
+        repeat i <- this.numOfWorkers do
+            workerdataResult(i) = get(workerdata(i))
+            totalSize += |workerdataResult(i)|
+        end
+
+        var result = new[v](totalSize)
+        var index = 0
+        for worker <- workerdataResult do
+            for element <- worker do
+                result(index) = element
+                index += 1
+            end
+        end
+        result
     end
 
 end

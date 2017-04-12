@@ -11,6 +11,7 @@ active class Worker[k,v]
     var table : [HashEntry[k,v]]
 
     def init(size: int, id:int) : unit
+        this.numberOfElements = 0
         this.tableSize = size
         this.id = id
         this.initTable()
@@ -31,6 +32,11 @@ active class Worker[k,v]
             hashentry = this.table(hash)
             println("collision")
         end
+
+        if (hashentry.getKey() != key) then
+            this.numberOfElements += 1
+        end
+
         println("w: {} hash: {}", this.id, hash)
         this.table(hash).add(key,value)
     end
@@ -38,11 +44,18 @@ active class Worker[k,v]
     def get(key:k,generatedHash:uint) : v
         var hash = (generatedHash) % this.tableSize
         var hashentry = this.table(hash)
-        var value = hashentry.getValue()
-        value
+        hashentry.getValue()
     end
 
-    def returntable() : [HashEntry[k,v]]
-        this.table
+    def elements() : [v]
+        var result = new [v](this.numberOfElements)
+        var index = 0
+        repeat i <- this.tableSize do
+            if this.table(i).notEmpty() then
+                result(index) = this.table(i).getValue()
+                index += 1
+            end
+        end
+        result
     end
 end

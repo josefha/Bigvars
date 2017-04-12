@@ -21,9 +21,10 @@ active class Main
         hashtable.put(222,p2)
         hashtable.put(333,p3)
 
+        var people = hashtable.elements()
 
-        var people = new[Person](3)
-        people = hashtable.getMany([111,222,333])
+        --var people = new[Person](3)
+        --people = hashtable.getMany([111,222,333])
 
         for person <- people do
             println(person.getname())

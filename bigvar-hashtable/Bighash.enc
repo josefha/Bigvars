@@ -26,4 +26,8 @@ local class Bighash[k,v]
     def getMany(keys:[k]) : [v]
         this.supervisor.getMany(keys)
     end
+
+    def elements() : [v]
+        this.supervisor.elements()
+    end
 end
