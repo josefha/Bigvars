@@ -58,4 +58,19 @@ local class Supervisor[k,v]
         value
     end
 
+    def getMany(keys:[k]) : [v]
+        var values = new[Fut[v]](|keys|)
+        repeat i <- |values| do
+            var hash = this.generateHash(keys(i))
+            var workerID = hash % this.numOfWorkers
+            values(i) = this.workers(workerID) ! get(keys(i),hash)
+        end
+
+        var returnValues = new[v](|keys|)
+        repeat i <- |values| do
+            returnValues(i) = get(values(i))
+        end
+        returnValues
+    end
+
 end

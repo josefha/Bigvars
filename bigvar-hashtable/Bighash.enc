@@ -22,4 +22,8 @@ local class Bighash[k,v]
     def remove(key:k) : unit
         print("")
     end
+
+    def getMany(keys:[k]) : [v]
+        this.supervisor.getMany(keys)
+    end
 end

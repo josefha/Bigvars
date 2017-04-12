@@ -15,10 +15,19 @@ active class Main
 
         var p1 = new Person("Josef",21)
         var p2 = new Person("Sahand",17)
+        var p3 = new Person("Liza",17)
         var hashtable = new Bighash[int,Person]()
         hashtable.put(111,p1)
-        hashtable.put(123213,p2)
-        println("value = {}",hashtable.get(123213).getname())
+        hashtable.put(222,p2)
+        hashtable.put(333,p3)
+
+
+        var people = new[Person](3)
+        people = hashtable.getMany([111,222,333])
+
+        for person <- people do
+            println(person.getname())
+        end
 
     end
 end
