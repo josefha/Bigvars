@@ -140,6 +140,14 @@ local class Supervisor[k,v] : Hasher
 
     end
 
+    def removeMany(keys:[k]) : unit
+        repeat i <- |keys| do
+            var hash = this.generateHash(keys(i))
+            var workerID = this.modulo(hash,this.numOfWorkers)
+            values(i) = this.workers(workerID) ! remove(keys(i),hash)
+        end
+    end
+
     def contains(value:v) : bool
         var result = false
         for element <- this.elements() do
