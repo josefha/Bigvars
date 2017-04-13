@@ -3,21 +3,10 @@
 module Supervisorh
 
 import Siphash
+import Hasher
 import Workerh
 
-
-trait GererateHash
-  def modulo(value : uint, mod : uint) : uint
-    EMBED (uint)
-      uint64_t value = (uint64_t) #{value};
-            uint64_t mod   = (uint64_t) #{mod};
-            (value % mod);
-    END
-  end
-end
-
-
-local class Supervisor[k,v]
+local class Supervisor[k,v] : Hasher
     var numOfWorkers: int
     var workers : [(Worker[k,v])]
     var workerSize : int
@@ -25,7 +14,7 @@ local class Supervisor[k,v]
     var siphash: Siphash
 
     def init() : unit
-        this.workerSize = 128
+        this.workerSize = 64
         this.numOfWorkers = 4
         this.tableSize = this.workerSize*this.numOfWorkers
         this.siphash = new Siphash()
@@ -41,27 +30,36 @@ local class Supervisor[k,v]
 
     def generateHash(key:k) : uint
         val pointer = EMBED (uint) (uint64_t) #{key}.p; END
-        val hash = this.siphash.hash(pointer)
-        hash
+        this.hash(pointer)
+    end
+
+    def hash(id:uint) : uint
+        this.siphash.hash(id)
     end
 
     def put(key:k,value:v) : Fut[unit]
         var hash = this.generateHash(key)
-        var workerID = hash % this.numOfWorkers
+        var workerID = this.modulo(hash,this.numOfWorkers)
         this.workers(workerID) ! put(key,value,hash)
     end
 
     def get(key:k) : v
         var hash = this.generateHash(key)
-        var workerID = hash % this.numOfWorkers
+        var workerID = this.modulo(hash,this.numOfWorkers)
         get(this.workers(workerID) ! get(key,hash))
+    end
+
+    def remove(key:k) : Fut[unit]
+        var hash = this.generateHash(key)
+        var workerID = this.modulo(hash,this.numOfWorkers)
+        this.workers(workerID) ! remove(key,hash)
     end
 
     def getMany(keys:[k]) : [v]
         var values = new[Fut[v]](|keys|)
         repeat i <- |values| do
             var hash = this.generateHash(keys(i))
-            var workerID = hash % this.numOfWorkers
+            var workerID = this.modulo(hash,this.numOfWorkers)
             values(i) = this.workers(workerID) ! get(keys(i),hash)
         end
 
@@ -120,6 +118,18 @@ local class Supervisor[k,v]
         result
     end
 
+    def clear() : unit
+        for worker <- this.workers do
+            worker ! clear()
+        end
+    end
+
+    def rehash() : unit
+        for worker <- this.workers do
+            worker ! rehash()
+        end
+    end
+
     def doubleSize() : unit
         this.workerSize = this.workerSize*2
         this.tableSize = this.workerSize*this.numOfWorkers
@@ -128,6 +138,16 @@ local class Supervisor[k,v]
             worker ! doubleSize()
         end
 
+    end
+
+    def contains(value:v) : bool
+        var result = false
+        for element <- this.elements() do
+            if (value == element) then
+                result = true
+            end
+        end
+        result
     end
 
     def getInfo() : unit

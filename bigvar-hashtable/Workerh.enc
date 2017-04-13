@@ -2,18 +2,21 @@
 module Workerh
 
 import HashEntry
+import Siphash
 import Hasher
 
-active class Worker[k,v]
+active class Worker[k,v] : Hasher
     var id : int
     var tableSize : int
     var numberOfElements: int
     var table : [HashEntry[k,v]]
+    var siphash : Siphash
 
     def init(size: int, id:int) : unit
         this.numberOfElements = 0
         this.tableSize = size
         this.id = id
+        this.siphash = new Siphash()
         this.initTable()
     end
 
@@ -30,16 +33,15 @@ active class Worker[k,v]
     end
 
     def put(key:k,value:v,generatedHash:uint) : unit
-        if (((this.numberOfElements+1)/this.tableSize) >= 0.7) then
-            this.doubleSize()
+        if (this.tableSize - this.numberOfElements < this.tableSize/4) then
+            this.rehash()
         end
 
-        var hash = (generatedHash) % this.tableSize
+        var hash = this.modulo(generatedHash,this.tableSize)
         var hashentry = this.table(hash)
         while ((hashentry.notEmpty()) && (hashentry.getKey() != key)) do
-            hash = (hash+1) % this.tableSize
+            hash = this.modulo(hash+1,this.tableSize)
             hashentry = this.table(hash)
-            --println("collision")
         end
 
         if (hashentry.getKey() != key) then
@@ -49,9 +51,20 @@ active class Worker[k,v]
     end
 
     def get(key:k,generatedHash:uint) : v
-        var hash = (generatedHash) % this.tableSize
+        var hash = this.modulo(generatedHash,this.tableSize)
         var hashentry = this.table(hash)
         hashentry.getValue()
+    end
+
+    def remove(key:k,generatedHash:uint) : unit
+        var hash = this.modulo(generatedHash,this.tableSize)
+        var hashentry = this.table(hash)
+        if (hashentry.notEmpty()) then
+            if (hashentry.getKey() == key) then
+                this.numberOfElements -= 1 
+                this.table(hash) = new HashEntry[k,v]()
+            end
+        end
     end
 
     def elements() : [v]
@@ -79,16 +92,41 @@ active class Worker[k,v]
     end
 
     def doubleSize() : unit
+        this.numberOfElements = 0
         this.tableSize = this.tableSize*2
         var newTable = new [HashEntry[k,v]](this.tableSize)
-
-        repeat i <- this.tableSize/2 do
-            newTable(i) = this.table(i)
-        end
-
-        repeat i <- this.tableSize/2 do
-            newTable(this.tableSize/2+i) = new HashEntry[k,v]()
+        repeat i <- this.tableSize do
+            newTable(i) = new HashEntry[k,v]()
         end
         this.table = newTable
+    end
+
+    def clear() : unit
+        this.numberOfElements = 0
+        var newTable = new [HashEntry[k,v]](this.tableSize)
+        repeat i <- this.tableSize do
+            newTable(i) = new HashEntry[k,v]()
+        end
+        this.table = newTable
+    end
+
+    def rehash() : unit
+        var elements = this.elements()
+        var keys = this.keys()
+        this.doubleSize()
+
+        repeat i <- |elements| do
+            var hash = this.generateHash(keys(i))
+            this.put(keys(i),elements(i),hash)
+        end
+    end
+
+    def generateHash(key:k) : uint
+        val pointer = EMBED (uint) (uint64_t) #{key}.p; END
+        this.hash(pointer)
+    end
+
+    def hash(id:uint) : uint
+        this.siphash.hash(id)
     end
 end

@@ -6,10 +6,25 @@ active class Main
     def main() : unit
         var hashtable = new Bighash[String, int]()
 
-        var key1 = "key123"
+        var key1 = "1"
+        var key2 = "2"
+        var key3 = "3"
+        var key4 = "4"
+        var key5 = "5"
+        var key6 = "6"
         hashtable.put(key1,11111)
-        hashtable.put(key1,22222)
-        println("key1 value = {}",hashtable.get(key1))
+        hashtable.put(key2,22222)
+        hashtable.put(key3,333333)
+        hashtable.put(key4,444444)
+        hashtable.put(key5,555555)
+
+        hashtable.remove(key4)
+        println(hashtable.contains(333333))
+        --hashtable.remove(key2)
+
+        for element <- hashtable.elements() do
+            println(element)
+        end
 
         var p1 = new Person("Josef",21)
         var p2 = new Person("Sahand",17)
@@ -18,23 +33,6 @@ active class Main
         hashtable.put(111,p1)
         hashtable.put(222,p2)
         hashtable.put(333,p3)
-
-        var i = 0
-        while i < 900 do
-            hashtable.put(i,p3)
-            i += 2
-        end
-
-        hashtable.getInfo()
-
-        -- var people = hashtable.elements()
-        -- var keys = hashtable.keys()
-        --var people = new[Person](3)
-        --people = hashtable.getMany([111,222,333])
-        -- for person <- people do
-        --     println(person.getname())
-        -- end
-
     end
 end
 

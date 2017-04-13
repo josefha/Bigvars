@@ -1,12 +1,13 @@
 # Journal - Josef
 
 ### Thursday 13/3
+  * completed hashtable prototype 1
 
 ### Wednesday 12/3
   * Wrote little on the background
-  * much improvments on hashtable 
+  * much improvments on hashtable
 ### Tuesday 11/03
-  * Read some others thesis
+  * Read others students thesis
   * Had an interview for a job that took some time.
 ### Monday 10/4
   * Started with the report

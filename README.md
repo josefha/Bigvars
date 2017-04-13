@@ -27,10 +27,14 @@
 
 ### List of methods for Prototype 1 for HashTable:
 * put(k,v) : unit
+* remove(k) : unit
 * get(k) : v
 * getMany([k]) : [v]
 * keys() : [k]
-* values() : [v]
+* elements() : [v]
+* contains(v) : bool
+* rehash() : unit
+* clear() : unit
 * getInfo() : unit
 
 ## Todo arrays:
@@ -41,5 +45,3 @@
 ## functionality
 * automate redistribution
 * different number of actors depending on size
-
-### notes:

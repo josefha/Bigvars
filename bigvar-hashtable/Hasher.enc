@@ -3,7 +3,7 @@
 module Hasher
 
 trait Hasher
-  require def hash(id : uint) : uint
+  --require def hash(id : uint) : uint
   def modulo(value : uint, mod : uint) : uint
     EMBED (uint)
       uint64_t value = (uint64_t) #{value};
