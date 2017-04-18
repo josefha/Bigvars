@@ -1,0 +1,21 @@
+
+
+
+active class wordCount
+    def mapper(key:String,value:int) : [(String,int)]
+        var words = key.split(" ")
+        result = new[int](len(words))
+        repeat i in words do
+            result(i) = (words(i),1)
+        end
+        result
+    end
+
+    def reducer(key:String,values:[int]) : (String,int)
+        sum = 0
+        for value in values:
+            sum += value
+        end
+        (key,sum)
+    end
+end

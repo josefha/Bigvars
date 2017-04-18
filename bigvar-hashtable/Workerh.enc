@@ -27,9 +27,9 @@ active class Worker[k,v] : Hasher
         end
     end
 
-    def getInfo() : int
+    def getInfo() : unit
         println("w: {} has: {}/{}", this.id, this.numberOfElements, this.tableSize)
-        this.numberOfElements
+        --this.numberOfElements
     end
 
     def put(key:k,value:v,generatedHash:uint) : unit
@@ -61,7 +61,7 @@ active class Worker[k,v] : Hasher
         var hashentry = this.table(hash)
         if (hashentry.notEmpty()) then
             if (hashentry.getKey() == key) then
-                this.numberOfElements -= 1 
+                this.numberOfElements -= 1
                 this.table(hash) = new HashEntry[k,v]()
             end
         end

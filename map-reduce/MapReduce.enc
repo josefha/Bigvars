@@ -1,0 +1,42 @@
+
+module MapReduce
+
+import Bighash
+
+local class MapReduce[k1,v1,k2,v2,v3]
+    var
+    def run(data:v1, m:(k1,v1)->(k2,v2), r:(k2,[v2]) -> [v3]): unit
+        --var mapReduce = new MapReduce()
+        --mapReduce.prepare()
+        ()
+    end
+
+    def prepare() : unit
+        ()
+    end
+
+    def map() : unit
+        ()
+    end
+
+    def shuffle() : unit
+        ()
+    end
+
+    def reduce() : unit
+        ()
+    end
+
+    def produce() : unit
+        ()
+    end
+
+end
+
+local class Iterator[t]
+  require
+    def next() : t
+    def has_next() : bool
+    def remove() : bool
+  end
+end

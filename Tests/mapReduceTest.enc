@@ -1,0 +1,9 @@
+
+import MapReduce
+
+active class Main
+    def main() : unit
+        var mapReduce = new MapReduce[String,int,String]()
+        mapReduce.prepare()
+    end
+end
