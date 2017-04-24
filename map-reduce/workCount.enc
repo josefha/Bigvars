@@ -1,10 +1,10 @@
 
 
 
-active class wordCount
-    def mapper(key:String,value:int) : [(String,int)]
-        var words = key.split(" ")
-        result = new[int](len(words))
+active class WordCount
+    def mapper(key:String,value:String) : [(String,int)]
+        var words = value.split(" ")
+        result = new[(int,String)](len(words))
         repeat i in words do
             result(i) = (words(i),1)
         end

@@ -1,9 +1,55 @@
 
 import MapReduce
+import Bighash
 
 active class Main
     def main() : unit
-        var mapReduce = new MapReduce[String,int,String]()
-        mapReduce.prepare()
+        println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
+        --testHash()
+
+        var data = "jag heter josef och jag gillar encore. detta är ett test med för word count. jag är bra"
+        var mapReduce = new MapReduce[int,String,String,int,int](0)
+        --var wordCount = new WordCount()
+
+        var mapf = fun(key:int,value:String) => map(key,value)
+        var reducef = fun(key:String,values:[int]) => reduce(key,values)
+        mapReduce.run(data, mapf, reducef)
+        ()
     end
+end
+
+-- mapreduce function from user [wordCount]
+fun map(key:int,value:String) : [(String,int)]
+    var words = value.split(" ")
+    var result = new[(String,int)](|words|)
+    repeat i <- |words| do
+        result(i) = (words(i),1)
+    end
+    result
+end
+
+fun reduce(key:String,values:[int]) : (String,int)
+    var sum = 0
+    for value <- values do
+        sum += value
+    end
+    (key,sum)
+end
+
+fun testHash() : unit
+    var hashtable = new Bighash[String, int]()
+
+    var key1 = "1"
+    var key2 = "2"
+    var key3 = "3"
+    var key4 = "4"
+    var key5 = "5"
+    var key6 = "6"
+    hashtable.put(key1,11111)
+    hashtable.put(key2,22222)
+    hashtable.put(key3,333333)
+    hashtable.put(key4,444444)
+    hashtable.put(key5,555555)
+
+    println(hashtable.hasKey("1"))
 end

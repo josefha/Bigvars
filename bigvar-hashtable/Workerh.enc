@@ -50,6 +50,7 @@ active class Worker[k,v] : Hasher
         this.table(hash).add(key,value)
     end
 
+    -- is this correct? :o see this.hasKey
     def get(key:k,generatedHash:uint) : v
         var hash = this.modulo(generatedHash,this.tableSize)
         var hashentry = this.table(hash)
@@ -119,6 +120,22 @@ active class Worker[k,v] : Hasher
             var hash = this.generateHash(keys(i))
             this.put(keys(i),elements(i),hash)
         end
+    end
+
+    def hasKey(key:k, generatedHash:uint) : bool
+        var result = false
+        var hash = this.modulo(generatedHash,this.tableSize)
+        var hashentry = this.table(hash)
+        while (hashentry.notEmpty()) do
+            if (hashentry.key == key) then
+                result = true
+                break
+            end
+            hash = this.modulo(hash+1,this.tableSize)
+            hashentry = this.table(hash)
+        end
+
+        result
     end
 
     def generateHash(key:k) : uint

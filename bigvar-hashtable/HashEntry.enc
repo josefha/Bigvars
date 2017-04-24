@@ -6,6 +6,7 @@ local class HashEntry[k,v]
     var value : v
     var hasEntry : bool
 
+
     def init() : unit
         this.hasEntry = false
     end
@@ -27,4 +28,47 @@ local class HashEntry[k,v]
     def getValue() : v
         this.value
     end
+
+    ------ Functions bellow used for testing a future feature
+
+    -- def extend(value:v) : unit
+    --     this.value.extend(v)
+    -- end
+    --
+    -- def getValues() : [v]
+    --     [this.value]
+    -- end
 end
+
+-- linear class Values[v]
+--     var first : Maybe[Value[v]]
+--     var size  : int
+--
+--     def init() : unit
+--       this.first =  Nothing : Maybe[Values[v]]
+--       this.size  = 1
+--     end
+--
+--     def add(value:v) : unit
+--         val node =  Just(new Value[v](value))
+--         this.first = node
+--     end
+-- end
+--
+--
+-- linear class Value[v]
+--     var value: v
+--     var nextValue : Maybe[Value[v]]
+--
+--     def init(value:v) : unit
+--         this.value = value
+--         this.nextValue = Nothing -- : Maybe[Values[v]]
+--     end
+
+    -- def extend(value:v) : unit
+    --     match this.nextValue with
+    --         case Just(next) => next.extend(value)
+    --         case _ => Just(new Value[v](value))
+    --     end
+    -- end
+-- end

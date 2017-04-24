@@ -47,6 +47,10 @@ local class Bighash[k,v]
         this.supervisor.rehash()
     end
 
+    def hasKey(key:k) : bool
+        this.supervisor.hasKey(key)
+    end
+
     def contains(value:v) : bool
         this.supervisor.contains(value)
     end

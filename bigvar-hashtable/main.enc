@@ -18,21 +18,23 @@ active class Main
         hashtable.put(key4,444444)
         hashtable.put(key5,555555)
 
-        hashtable.remove(key4)
-        println(hashtable.contains(333333))
-        --hashtable.remove(key2)
+        println(hashtable.hasKey(key1))
 
-        for element <- hashtable.elements() do
-            println(element)
-        end
-
-        var p1 = new Person("Josef",21)
-        var p2 = new Person("Sahand",17)
-        var p3 = new Person("Liza",17)
-        var hashtable = new Bighash[int,Person]()
-        hashtable.put(111,p1)
-        hashtable.put(222,p2)
-        hashtable.put(333,p3)
+        -- hashtable.remove(key4)
+        -- println(hashtable.contains(333333))
+        -- --hashtable.remove(key2)
+        --
+        -- for element <- hashtable.elements() do
+        --     println(element)
+        -- end
+        --
+        -- var p1 = new Person("Josef",21)
+        -- var p2 = new Person("Sahand",17)
+        -- var p3 = new Person("Liza",17)
+        -- var hashtable = new Bighash[int,Person]()
+        -- hashtable.put(111,p1)
+        -- hashtable.put(222,p2)
+        -- hashtable.put(333,p3)
     end
 end
 
