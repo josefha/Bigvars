@@ -15,22 +15,24 @@ local class MapReduce[k1,v1,k2,v2,v3]
     end
 
 
-    def run(data:v1, m:(k1,v1)->[(k2,v2)], r:(k2,[v2]) -> (k2,v2)): unit
-        var datasplit = [data] --this.prepare()
+    def run(data:Bighash[k1,v1], m:(k1,v1)->[(k2,v2)], r:(k2,[v2]) -> (k2,v2)): unit
+        --var dividedData = this.prepare(data)
 
-        var pairs = new[Fut[[(k2,v2)]]](|datasplit|)
 
-        repeat i <- |datasplit| do
-            var mapper = new Mapper[k1,v1,k2,v2](this.key,datasplit(i))
-            pairs(i) = mapper ! map(m)
-        end
-
-        for pairlist <- pairs do
-            this.shuffle(get(pairlist))
-        end
+        -- var pairs = new[Fut[[(k2,v2)]]](|datasplit|)
+        --
+        -- repeat i <- |datasplit| do
+        --     var mapper = new Mapper[k1,v1,k2,v2](this.key,datasplit(i))
+        --     pairs(i) = mapper ! map(m)
+        -- end
+        --
+        -- for pairlist <- pairs do
+        --     this.shuffle(get(pairlist))
+        -- end
+        ()
     end
 
-    def prepare() : unit
+    def prepare(data:Bighash[k1,v1]) : unit--[[k1]]
         ()
     end
 
@@ -91,14 +93,3 @@ active class Mapper[k1,v1,k2,v2]
         result
     end
 end
--- local class Iterator[t]
---     def next() : t
---         ()
---     end
---     def has_next() : bool
---         ()
---     end
---     def remove() : bool
---         ()
---     end
--- end

@@ -73,3 +73,13 @@ local class Bighash[k,v]
         this.supervisor.getInfo()
     end
 end
+
+fun generateFromStringArray(input:[String]) : Bighash[int,String]
+    var bighash = new Bighash[int,String]()
+
+    repeat i <- |input| do
+        bighash.put(i,input(i))
+    end
+
+    bighash
+end
