@@ -32,33 +32,26 @@ active class Worker[k,v] : Hasher
         --this.numberOfElements
     end
 
-    def put(key:k,value:v,generatedHash:uint) : unit
+    def put(key:k,value:v,gHash:uint) : unit
         if (this.tableSize - this.numberOfElements < this.tableSize/4) then
             this.rehash()
         end
 
-        var hash = this.modulo(generatedHash,this.tableSize)
-        var hashentry = this.table(hash)
-        while ((hashentry.notEmpty()) && (hashentry.getKey() != key)) do
-            hash = this.modulo(hash+1,this.tableSize)
-            hashentry = this.table(hash)
-        end
+        var hashentry = this.getEntry(key,gHash)
 
         if (hashentry.getKey() != key) then
             this.numberOfElements += 1
         end
-        this.table(hash).add(key,value)
+        hashentry.add(key,value)
     end
 
-    -- is this correct? :o see this.hasKey
-    def get(key:k,generatedHash:uint) : v
-        var hash = this.modulo(generatedHash,this.tableSize)
-        var hashentry = this.table(hash)
+    def get(key:k,gHash:uint) : v
+        var hashentry = this.getEntry(key,gHash)
         hashentry.getValue()
     end
 
-    def remove(key:k,generatedHash:uint) : unit
-        var hash = this.modulo(generatedHash,this.tableSize)
+    def remove(key:k,gHash:uint) : unit
+        var hash = this.modulo(gHash,this.tableSize)
         var hashentry = this.table(hash)
         if (hashentry.notEmpty()) then
             if (hashentry.getKey() == key) then
@@ -122,20 +115,38 @@ active class Worker[k,v] : Hasher
         end
     end
 
-    def hasKey(key:k, generatedHash:uint) : bool
+    def hasKey(key:k, gHash:uint) : bool
         var result = false
-        var hash = this.modulo(generatedHash,this.tableSize)
+        var hashentry = this.getEntry(key,gHash)
+        if hashentry.notEmpty() then
+            result = true
+        end
+        result
+    end
+
+    def extend(key:k,value:v,gHash:uint) : unit
+        var hashentry = this.getEntry(key,gHash)
+        hashentry.extend(value)
+    end
+
+    def extendAll(key:k, values:[v],gHash:uint) : unit
+        var hashentry = this.getEntry(key,gHash)
+        hashentry.extendAll(values)
+    end
+
+    def getValues(key:k,gHash:uint) : [v]
+        var hashentry = this.getEntry(key,gHash)
+        hashentry.getValues()
+    end
+
+    def getEntry(key:k,gHash:uint) : HashEntry[k,v]
+        var hash = this.modulo(gHash,this.tableSize)
         var hashentry = this.table(hash)
-        while (hashentry.notEmpty()) do
-            if (hashentry.key == key) then
-                result = true
-                break
-            end
+        while ((hashentry.notEmpty()) && (hashentry.getKey() != key)) do
             hash = this.modulo(hash+1,this.tableSize)
             hashentry = this.table(hash)
         end
-
-        result
+        hashentry
     end
 
     def generateHash(key:k) : uint

@@ -55,6 +55,20 @@ local class Bighash[k,v]
         this.supervisor.contains(value)
     end
 
+    ------------------------------------
+
+    def extend(key:k, value:v) : unit
+        this.supervisor.extend(key,value)
+    end
+
+    def extendAll(key:k, values:[v]) : unit
+        this.supervisor.extendAll(key,values)
+    end
+
+    def getValues(key:k) : [v]
+        this.supervisor.getValues(key)
+    end
+
     def getInfo() : unit
         this.supervisor.getInfo()
     end

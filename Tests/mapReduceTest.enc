@@ -5,7 +5,8 @@ import Bighash
 active class Main
     def main() : unit
         println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
-        --testHash()
+        testHash()
+
 
         var data = "jag heter josef och jag gillar encore. detta är ett test med för word count. jag är bra"
         var mapReduce = new MapReduce[int,String,String,int,int](0)
@@ -46,10 +47,18 @@ fun testHash() : unit
     var key5 = "5"
     var key6 = "6"
     hashtable.put(key1,11111)
-    hashtable.put(key2,22222)
+    hashtable.put(key2,21222)
+    -- hashtable.extendAll(key2,[22222,2123,566,22])
+    hashtable.extend(key2,9999)
+    var values = hashtable.getValues(key2)
+    for value <- values do
+        println(value)
+    end
+
     hashtable.put(key3,333333)
     hashtable.put(key4,444444)
     hashtable.put(key5,555555)
 
-    println(hashtable.hasKey("1"))
+    println(hashtable.hasKey(key3))
+    println(hashtable.get(key3))
 end

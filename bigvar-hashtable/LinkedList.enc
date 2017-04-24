@@ -1,5 +1,6 @@
 -- From future standard library, taken from https://github.com/Chilinot/encorestdlib/blob/master/LinkedList.enc
 -- Author: Lucas Arnström
+-- modified by Josef Karakoca 24 april 2017
 
 module LinkedList
 
@@ -7,7 +8,7 @@ import Data.Either
 import Collection
 import Iterable
 
-passive class LinkedNode[t] : Id
+local class LinkedNode[t] : Id
   var value : t
   var prev : Maybe[LinkedNode[t]]
   var next : Maybe[LinkedNode[t]]
@@ -18,7 +19,7 @@ passive class LinkedNode[t] : Id
   end
 end
 
-passive class LinkedList[t] : Collection[t](drop(), first, last, size) + Id
+local class LinkedList[t] : Collection[t](drop(), first, last, size) + Id
   var first : Maybe[LinkedNode[t]]
   var last  : Maybe[LinkedNode[t]]
   var size  : int
@@ -361,27 +362,27 @@ passive class LinkedList[t] : Collection[t](drop(), first, last, size) + Id
     return result
   end
 
-  def flatMap[u](f : t -> LinkedList[u]) : LinkedList[u]
-    val result = new LinkedList[u]()
-
-    var cursor = this.first
-    while cursor != Nothing do
-      val current = match cursor with
-                      case Just(n) => n
-                    end
-
-      val es = f(current.value)
-      es.foreach(fun (x:u)
-                   result.append(x)
-                 end)
-
-      cursor = current.next
-    end
-    return result
-  end
+--   def flatMap[u](f : t -> LinkedList[u]) : LinkedList[u]
+--     val result = new LinkedList[u]()
+--
+--     var cursor = this.first
+--     while cursor != Nothing do
+--       val current = match cursor with
+--                       case Just(n) => n
+--                     end
+--
+--       val es = f(current.value)
+--       es.foreach(fun (x:u)
+--                    result.append(x)
+--                  end)
+--
+--       cursor = current.next
+--     end
+--     return result
+--  end
 end
 
-passive class LinkedListIterator[t]
+local class LinkedListIterator[t]
   val internal_list : LinkedList[t]
   var next_node     : Maybe[LinkedNode[t]]
 

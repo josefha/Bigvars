@@ -1,20 +1,23 @@
 
 module HashEntry
 
+import LinkedList
+
 local class HashEntry[k,v]
     var key : k
-    var value : v
+    var values : LinkedList[v]
     var hasEntry : bool
-
 
     def init() : unit
         this.hasEntry = false
+        this.values = new LinkedList[v]()
     end
 
     def add(key:k,value:v) : unit
         this.hasEntry = true
         this.key = key
-        this.value = value
+        this.values = new LinkedList[v]()
+        this.values.append(value)
     end
 
     def notEmpty() : bool
@@ -26,49 +29,31 @@ local class HashEntry[k,v]
     end
 
     def getValue() : v
-        this.value
+        match this.values.first with
+            case Just(node) =>
+                node.value
+            end
+        end
     end
 
-    ------ Functions bellow used for testing a future feature
+    -- Functions to use for MapRedece Framwork
 
-    -- def extend(value:v) : unit
-    --     this.value.extend(v)
-    -- end
+    def extend(value:v) : unit
+        this.hasEntry = true
+        this.values.append(value)
+    end
+
+    def extendAll(values:[v]) : unit
+        this.values.append_all(values)
+    end
     --
-    -- def getValues() : [v]
-    --     [this.value]
-    -- end
+    def getValues() : [v]
+        var elements = new[v](this.values.size())
+        repeat i <- this.values.size() do
+            match this.values.element_at(i) with
+                case Just(element) => elements(i) = element
+            end
+        end
+        elements
+    end
 end
-
--- linear class Values[v]
---     var first : Maybe[Value[v]]
---     var size  : int
---
---     def init() : unit
---       this.first =  Nothing : Maybe[Values[v]]
---       this.size  = 1
---     end
---
---     def add(value:v) : unit
---         val node =  Just(new Value[v](value))
---         this.first = node
---     end
--- end
---
---
--- linear class Value[v]
---     var value: v
---     var nextValue : Maybe[Value[v]]
---
---     def init(value:v) : unit
---         this.value = value
---         this.nextValue = Nothing -- : Maybe[Values[v]]
---     end
-
-    -- def extend(value:v) : unit
-    --     match this.nextValue with
-    --         case Just(next) => next.extend(value)
-    --         case _ => Just(new Value[v](value))
-    --     end
-    -- end
--- end
