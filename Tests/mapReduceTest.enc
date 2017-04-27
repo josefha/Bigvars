@@ -1,27 +1,101 @@
 
 import MapReduce
 import Bighash
+import Siphash
+
+EMBED
+  #include <stdint.h> // uintptr_t
+BODY
+END
 
 active class Main
     def main() : unit
-        println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
-        --testHash()
-
-        var input = dataInput().split(".")
-        var data = generateFromStringArray(input) -- bigvar
-
-        data.getInfo()
-
-        var mapReduce = new MapReduce[int,String,String,int,int](0)
-
-        var mapf = fun(key:int,value:String) => map(key,value)
-        var reducef = fun(key:String,values:[int]) => reduce(key,values)
-
-        mapReduce.run(data, mapf, reducef)
+        println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
+        testHash()
+        --
+        -- var input = dataInput().split("\n")
+        --
+        -- var data = generateFromStringArray(["hej hej h h h jag heter josef"])--,"vad du hej hej","asdasd jkjk jka asd påok", "lkas asdkllkj hej amklkljqwsd", "agfasdgd dfsg"]) -- bigvar
+        --
+        -- var stringID = fun(k:String) => EMBED (uint) (uint64_t) #{k.getData()}; END
+        -- var intID = fun(k:int) => intID(k)
+        --
+        -- var mapReduce = new MapReduce[int,String,String,int,int](stringID)
+        --
+        -- var mapf = fun(key:int,value:String) => map(key,value)
+        -- var reducef = fun(key:String,values:[int]) => reduce(key,values)
+        -- -- Running
+        -- var result = mapReduce.run(data, mapf, reducef)
+        --
+        -- -----------------------
+        --
+        --
+        -- var bighash = new Bighash[String,int](stringID)
+        -- --[Fut[[[(v,k)]]]]
+        -- for workerResult <- result do
+        --     --Fut[[[(v,k)]]]
+        --     var workerData = get(workerResult)
+        --     --[[(v,k)]]
+        --     repeat i <- |workerData| do
+        --         for pairs <- workerData do
+        --             --[(v,k)]
+        --             for pair <- pairs do
+        --                 println(pair)
+        --                 var key = pair.0
+        --                 println(key.equals("hej"))
+        --                 println(key)
+        --                 var value:int = pair.1
+        --
+        --                 if (false) then
+        --                     bighash.extend("hej",1)
+        --                 else
+        --                     bighash.extend(key,1)
+        --                 end
+        --             end
+        --         end
+        --     end
+        -- end
+        --
+        -- var hej = "hej"
+        -- var hej2 = "hej"
+        -- bighash.extend("hej",2)
+        -- bighash.extend(hej2,5)
+        -- bighash.extend(hej,3)
+        --
+        -- var f = fun(p:String) => bighash.extend(p,4)
+        -- f("hej")
+        --
+        -- println(stringID(hej))
+        -- --
+        -- var keys = bighash.keys()
+        -- println("KEYS LEN {}", |keys| )
+        --
+        -- for key <- keys do
+        --     println(key)
+        -- end
+        -- println("-----")
+        --
+        -- var siphash = new Siphash()
+        --
+        -- repeat i <- |keys| do
+        --     var values = bighash.getValues(keys(i))
+        --     var s = keys(i)
+        --     print("\n|{}|, hash : {}", keys(i), stringID(s))
+        --     for value <- values do
+        --         print(" <- {}",value)
+        --     end
+        --     println("")
+        -- end
+        --
+        -- println("------------------------")
         ()
     end
 end
 
+-- fun test(k:String) : uint
+--     var key = k
+--     test
+-- end
 -- wordCount
 fun map(key:int,value:String) : [(String,int)]
     var words = value.split(" ")
@@ -40,30 +114,60 @@ fun reduce(key:String,values:[int]) : (String,int)
     (key,sum)
 end
 
-fun testHash() : unit
-    var hashtable = new Bighash[String, int]()
-
-    var key1 = "1"
-    var key2 = "2"
-    var key3 = "3"
-    var key4 = "4"
-    var key5 = "5"
-    var key6 = "6"
-    hashtable.put(key1,11111)
-    hashtable.put(key2,21222)
-    -- hashtable.extendAll(key2,[22222,2123,566,22])
-    hashtable.extend(key2,9999)
-    var values = hashtable.getValues(key2)
-    for value <- values do
-        println(value)
+local class Str : HashCode
+    var hash_code : uint
+    def init(str:String) : unit
+        var stringID = fun(k:String) => EMBED (uint) (uint64_t) #{k.getData()}; END
+        this.hash_code = stringID(str)
     end
+end
 
-    hashtable.put(key3,333333)
-    hashtable.put(key4,444444)
-    hashtable.put(key5,555555)
+fun testHash() : unit
+    var hashtable = new Bighash[String, int](fun(k:String) => stringID(k))
 
-    println(hashtable.hasKey(key3))
-    println(hashtable.get(key3))
+    var key1 = new Str("1000")
+    var key2 = new Str("111")
+    var key3 = new Str("222222")
+    var key4 = new Str("555555")
+    var key5 = new Str("111")
+    var key6 = new Str("1000")
+
+    var hash = new Siphash()
+
+    println("1 : {}", hash.hash(key1.get_hash()))
+    println("2 : {}", hash.hash(key2.get_hash()))
+    println("3 : {}", hash.hash(key3.get_hash()))
+    println("4 : {}", hash.hash(key4.get_hash()))
+    println("5 : {}", hash.hash(key5.get_hash()))
+    println("6 : {}", hash.hash(key6.get_hash()))
+    --
+    -- --var pointer1 = EMBED (uint) (uint64_t) #{key1.getData()}; END
+    --
+    -- hashtable.put("10",11111)
+    -- hashtable.put(key2,21222)
+    -- hashtable.extend("10",333333)
+    -- hashtable.extend("11",444444)
+    -- hashtable.extend("323",444444)
+    -- -- hashtable.extend("53454",444444)
+    -- -- hashtable.extend("123",444444)
+    -- --println(hashtable.get("11"))
+    --
+    -- var values = hashtable.keys() --getValues("11")
+    -- for value <- values do
+    --     print("values: ")
+    --     println(value)
+    --     println(hashtable.get(value))
+    -- end
+    --
+    -- println("----------------------")---------------------------------
+
+    -- var hashtable2 = new Bighash[int, String](fun(k:int) => intID(k))
+    --
+    --
+    -- hashtable2.put(11,"OMG 11111")
+    -- hashtable2.put(123123,"123123123")
+    -- hashtable2.extend(123123,"tjatjat")
+    -- println(hashtable2.get(11))
 end
 
 fun dataInput() : String
@@ -114,4 +218,46 @@ fun dataInput() : String
     needed and if it is devise a syntax, a compilation scheme and implement it. Also investigate and possible implement support
     for more datatypes such as distributed Sets. Tests and measurements of my implementation is also a priority.
     end"
+end
+
+local trait HashCode
+  require var hash_code : uint
+  def hash_adress() : uint
+    EMBED (int)
+      // Hashing-key, can be any random bytes
+      uint8_t k[16] = {
+          0x00,0x01,0x02,0x03,0x04,0x05,0x06,0x07, // k0
+          0x08,0x09,0x0a,0x0b,0x0c,0x0d,0x0e,0x0f  // k1
+      };
+
+      // Allocate 8 bytes on the stack for the hashcode
+      uint8_t hash[8];
+
+      // Retrieve adress of this object
+      uintptr_t adress = (uintptr_t) _this;
+
+      // Convert the adress to an uint8_t-array
+      // WARNING: Assumes little endian!
+      size_t ptr_size = sizeof(uintptr_t);
+      uint8_t adress_arr[ptr_size];
+      for(int i = 0; i < ptr_size; ++i) {
+          adress_arr[i] = (uint8_t)((adress) >> i*8);
+      }
+
+      // Compute the hash value
+      // WARNING: size_t may be larger than uint64_t !!!
+      siphash(hash, adress_arr, (uint64_t) ptr_size, k);
+
+      // Return the value to the caller
+      U8TO64_LE(hash);
+    END
+  end
+
+  def get_hash() : uint
+    this.hash_code
+  end
+
+  def equals(other : HashCode) : bool
+    this.hash_code == other.get_hash()
+  end
 end

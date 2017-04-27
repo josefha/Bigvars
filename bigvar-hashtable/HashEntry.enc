@@ -6,22 +6,31 @@ import LinkedList
 local class HashEntry[k,v]
     var key : k
     var values : LinkedList[v]
+    var hashValue : uint
     var hasEntry : bool
+    var size : int
 
     def init() : unit
         this.hasEntry = false
         this.values = new LinkedList[v]()
+        this.size = 0
     end
 
-    def add(key:k,value:v) : unit
+    def add(key:k,value:v,hashValue:uint) : unit
+        this.hashValue = hashValue
         this.hasEntry = true
         this.key = key
         this.values = new LinkedList[v]()
         this.values.append(value)
+        this.size = 1
     end
 
     def notEmpty() : bool
         this.hasEntry
+    end
+
+    def getHash() : uint
+        this.hashValue
     end
 
     def getKey() : k
@@ -38,18 +47,27 @@ local class HashEntry[k,v]
 
     -- Functions to use for MapRedece Framwork
 
-    def extend(value:v) : unit
+    -- Need a lock here..
+    def extend(key:k,value:v,hashValue:uint) : unit
+        this.size += 1
+        this.hashValue = hashValue
+        this.key = key
         this.hasEntry = true
         this.values.append(value)
     end
 
-    def extendAll(values:[v]) : unit
+    def extendAll(key:k,values:[v],hashValue:uint) : unit
+        this.size += |values|
+        this.hashValue = hashValue
+        this.key = key
+        this.hasEntry = true
         this.values.append_all(values)
     end
     --
     def getValues() : [v]
-        var elements = new[v](this.values.size())
-        repeat i <- this.values.size() do
+        var elements = new[v](this.size)
+        repeat i <- this.size do
+            println("")
             match this.values.element_at(i) with
                 case Just(element) => elements(i) = element
             end

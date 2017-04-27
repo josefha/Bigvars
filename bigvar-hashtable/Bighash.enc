@@ -7,8 +7,8 @@ import Supervisorh
 local class Bighash[k,v]
     var supervisor : Supervisor[k,v]
 
-    def init() : unit
-        this.supervisor = new Supervisor[k,v]()
+    def init(f: k -> uint) : unit
+        this.supervisor = new Supervisor[k,v](f:k -> uint)
     end
 
     def put(key:k,value:v) : unit
@@ -69,17 +69,31 @@ local class Bighash[k,v]
         this.supervisor.getValues(key)
     end
 
+    def mapper(m:(k,v)->[(v,k)]) : [Fut[[[(v,k)]]]]
+        this.supervisor.mapper(m)
+    end
+
     def getInfo() : unit
         this.supervisor.getInfo()
     end
 end
 
 fun generateFromStringArray(input:[String]) : Bighash[int,String]
-    var bighash = new Bighash[int,String]()
+
+    var bighash = new Bighash[int,String](fun(k:int) => intID(k))
 
     repeat i <- |input| do
+        println(i)
         bighash.put(i,input(i))
     end
 
     bighash
+end
+
+fun stringID(s : String) : uint
+    EMBED (uint) (uint64_t) #{s.getData()}; END
+end
+
+fun intID(key : int) : uint
+    EMBED (uint) (uint64_t) #{key}; END
 end

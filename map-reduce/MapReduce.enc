@@ -5,91 +5,54 @@ import Bighash
 
 local class MapReduce[k1,v1,k2,v2,v3]
 
-    var key : k1
-    var hashtable : Bighash[k2,[v2]]
+    var hasher : v1 -> uint
 
-    def init(key:k1) : unit
-        this.hashtable = new Bighash[k2, [v2]]()
-        --fix for testing and going forward
-        this.key = key
+    def init(hasher: v1 -> uint): unit
+        this.hasher = hasher
     end
 
+    def run(data:Bighash[k1,v1], m:(k1,v1)->[(v1,k1)], r:(k2,[v2]) -> (k2,v2)): [Fut[[[(v1,k1)]]]] --mapResult --(k2,v2)): Bighash[v1,k1]--[Fut[[[(v1,k1)]]]]
+        var mapResult = data.mapper(m)
 
-    def run(data:Bighash[k1,v1], m:(k1,v1)->[(k2,v2)], r:(k2,[v2]) -> (k2,v2)): unit
-        --var dividedData = this.prepare(data)
+        --var sortedData = this.sort(mapResult)
 
 
-        -- var pairs = new[Fut[[(k2,v2)]]](|datasplit|)
-        --
-        -- repeat i <- |datasplit| do
-        --     var mapper = new Mapper[k1,v1,k2,v2](this.key,datasplit(i))
-        --     pairs(i) = mapper ! map(m)
-        -- end
-        --
-        -- for pairlist <- pairs do
-        --     this.shuffle(get(pairlist))
-        -- end
-        ()
+        --mapResult
+        mapResult
     end
 
-    def prepare(data:Bighash[k1,v1]) : unit--[[k1]]
-        ()
+    def prepare(data:Bighash[k1,v1]) : Bighash[k1,v1]
+        data
     end
 
+    -- def sort(result: [Fut[[[(v1,k1)]]]]) : Bighash[v1,k1]
+    --     var hasher = fun(k:v1) => this.hasher(k)
+    --     var bighash = new Bighash[v1,k1](hasher)
+    --     --[Fut[[[(v,k)]]]]
+    --     for workerResult <- result do
+    --         --Fut[[[(v,k)]]]
+    --         var workerData = get(workerResult)
+    --         --[[(v,k)]]
+    --         repeat i <- |workerData| do
+    --             for pairs <- workerData do
+    --                 --[(v,k)]
+    --                 for pair <- pairs do
+    --                     var key = pair.0
+    --                     var value = pair.1
+    --                     bighash.extend(key,value)
+    --                 end
+    --             end
+    --         end
+    --     end
+    --     bighash
+    --end
 
-    -- [(jag,1),(är,1),(jag,1)] etc
-    def shuffle(data:[(k2,v2)]) : unit
-        -- for pair <- data do
-        --     key = pair.0
-        --     value = pair.0
-        --     if(this.hashtable.hasKey(key)) then
-        --         var value = hashtable.get(key)
-        --         hashtable.put(newValue)
-        --     end
-        -- end
-        ()
-    end
-
-    def reduce() : unit
-        ()
-    end
-
-    def produce() : unit
-        ()
-    end
-
-    def readfile(name:String) : [String]
-
-        -- EMBED (unit)
-        -- #include <stdio.h>
-        -- #include <stdlib.h>
-        -- BODY
-        -- FILE * fPointer;
-        -- fPointer = fopen("file.txt","r")
-        -- fclose(fPointer)
-        -- END
-
-        ["asd"]
-    end
-end
-
-active class Mapper[k1,v1,k2,v2]
-
-    var data : v1
-    var key : k1
-    var result : [(k2,v2)]
-
-    def init(key:k1,data: v1) : unit
-        this.data = data
-        this.key = key
-    end
-
-    -- key: row number?
-    -- data: "jag heter josef och jag gillar encore.
-    -- result: [(jag,1),(heter,1),(josef,1)(jag,1)] etc
-    def map(m:(k1,v1)->[(k2,v2)]) : [(k2,v2)]
-        --transform input records into a intermediate records
-        var result = m(this.key,this.data)
-        result
-    end
+    --
+    -- def reduce() : unit
+    --     ()
+    -- end
+    --
+    -- def produce() : unit
+    --     ()
+    -- end
 end

@@ -12,8 +12,10 @@ local class Supervisor[k,v] : Hasher
     var workerSize : int
     var tableSize : int
     var siphash: Siphash
+    var hashFunction : k -> uint
 
-    def init() : unit
+    def init(f:k -> uint) : unit
+        this.hashFunction = f
         this.workerSize = 64
         this.numOfWorkers = 4
         this.tableSize = this.workerSize*this.numOfWorkers
@@ -24,17 +26,14 @@ local class Supervisor[k,v] : Hasher
 
     def initTable() : unit
         repeat i <- this.numOfWorkers do
-            this.workers(i) = new Worker[k,v](this.workerSize,i)
+            this.workers(i) = new Worker[k,v](this.workerSize,i,this.hashFunction)
         end
     end
 
     def generateHash(key:k) : uint
-        val pointer = EMBED (uint) (uint64_t) #{key}.p; END
-        this.hash(pointer)
-    end
-
-    def hash(id:uint) : uint
-        this.siphash.hash(id)
+        var k = key
+        --val pointer = EMBED (uint) (uint64_t) #{key}.p; END
+        this.siphash.hash(this.hashFunction(k))
     end
 
     def put(key:k,value:v) : Fut[unit]
@@ -110,8 +109,8 @@ local class Supervisor[k,v] : Hasher
         var result = new[k](totalSize)
         var index = 0
         for worker <- workerdataResult do
-            for element <- worker do
-                result(index) = element
+            repeat i <- |worker| do
+                result(index) = worker(i)
                 index += 1
             end
         end
@@ -166,10 +165,12 @@ local class Supervisor[k,v] : Hasher
         result
     end
 
+    -------------------------------------------------------
+
     def extend(key:k,value:v) : unit
         var hash = this.generateHash(key)
         var workerID = this.modulo(hash,this.numOfWorkers)
-        this.workers(workerID) ! extend(key,value,hash)
+        get(this.workers(workerID) ! extend(key,value,hash))
     end
 
     def extendAll(key:k, values:[v]) : unit
@@ -182,6 +183,14 @@ local class Supervisor[k,v] : Hasher
         var hash = this.generateHash(key)
         var workerID = this.modulo(hash,this.numOfWorkers)
         get(this.workers(workerID) ! getValues(key,hash))
+    end
+
+    def mapper(m:(k,v)->[(v,k)]) : [Fut[[[(v,k)]]]]
+        var result = new[Fut[[[(v,k)]]]](this.numOfWorkers)
+        repeat i <- this.numOfWorkers do
+            result(i) = this.workers(i) ! mapper(m)
+        end
+        result
     end
 
     def getInfo() : unit
