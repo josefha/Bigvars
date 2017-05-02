@@ -51,6 +51,10 @@ local class HashEntry[k,v]
         m(this.key,this.getValue())
     end
 
+    def reduce(r:(k,[v]) -> (k,v)) : (k,v)
+        r(this.key,this.getValues())
+    end
+
 
     def extend(key:k,value:v,hashValue:uint) : unit
         this.size += 1

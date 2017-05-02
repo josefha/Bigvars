@@ -215,7 +215,18 @@ linear class Supervisor[k,v]
         repeat i <- this.numOfWorkers do
             get(futs(i))
         end
-        
+    end
+
+    def reducer(r:(k,[v]) -> (k,v),bighash:Bighash[k,v]) : unit
+        var futs = new[Fut[unit]](this.numOfWorkers)
+        repeat i <- this.numOfWorkers do
+            var bighashCopy = bighash.copy()
+            futs(i) = this.workers(i) ! reducer(r,consume bighashCopy)
+        end
+
+        repeat i <- this.numOfWorkers do
+            get(futs(i))
+        end
     end
 
     def getInfo() : unit

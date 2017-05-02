@@ -3,59 +3,32 @@ import MapReduce
 import Bighash
 import Siphash
 
-EMBED
-  #include <stdint.h> // uintptr_t
-  #include <unistd.h>
-BODY
-END
+import ExampleText
 
 active class Main
     def main() : unit
-        --println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
-        --testHash()
-        --
-        var input = ["a","b b","c b", "b d","a","a","a hej","b","b a a","hej hej hej"]--, "c d d d","d c b  a e"] -- dataInput().split("\n")
-        -- a = 5
-        -- b = 7
-        -- c = 5
-        -- d = 5
-        --
 
-
+        var input = specText().split("\n")
         var data = new Bighash[int,String](fun(k:int) => intID(k))
 
         repeat i <- |input| do
             data.put(i,input(i))
         end
-        --, "a a","b b","c b", "b d", "c d d d","d c b  a e"])--,"vad du hej hej","asdasd jkjk jka asd påok", "lkas asdkllkj hej amklkljqwsd", "agfasdgd dfsg"]) -- bigvar
 
-        var stringID = fun(k:String) => stringID_NEW(k)
-        var intID = fun(k:int) => intID(k)
-
-        var mapReduce = new MapReduce[int,String,String,int,int](stringID)
-
+        -----------------------------------------------------
+        var mapReduce = new MapReduce[int,String,String,int,int](fun(k:String) => stringID_NEW(k))
         var mapf = fun(key:int,value:String) => map(key,value)
         var reducef = fun(key:String,values:[int]) => reduce(key,values)
-        -- Running
-
         var result = mapReduce.run(consume data, mapf, reducef)
-        --
-        -- var keys = result.keys()
-        -- for key <- keys do
-        --     print("\n {} values: ", key)
-        --     var values =  result.getValues(key)
-        --     for value <- values do
-        --         print("{}-",value)
-        --     end
-        -- end
+        -----------------------------------------------------
+
         var keys = result.keys()
         for key <- keys do
-            print("\n {}: ", key)
             var value = reduce(key,result.getValues(key))
-            print("{}-",value)
+            println("'{}'",value)
         end
 
-        println("\n end")
+        println("end")
 
         ()
     end
@@ -77,147 +50,4 @@ fun reduce(key:String,values:[int]) : (String,int)
         sum += value
     end
     (key,sum)
-end
-
-fun testHash() : unit
-    ()
-    var hashtable = new Bighash[String, int](fun(k:String) => stringID_NEW(k))
-
-    var hashtable2 = hashtable.copy()
-    var hashtable3 = hashtable2.copy()
-
-    var key1 = "1000"
-    var key2 = "111"
-    var key3 = "222222"
-    var key4 = "555555"
-    var key5 = "111"
-    var key6 = "1000"
-
-    hashtable.extend("5000",1)
-    hashtable.extend("5000",1)
-
-    var actor1 = new AC
-    var wait1 = actor1 ! ext(consume hashtable2,2)
-
-    var actor2 = new AC
-    var wait2 = actor2 ! ext(consume hashtable3,3)
-
-    get(wait1)
-    get(wait2)
-
-    hashtable.extend("5000",1)
-    hashtable.extend("5000",1)
-    hashtable.extend("5000",1)
-
-    var keys = hashtable.keys() --getValues("11")
-    for key <- keys do
-        print("\n {} values: ", key)
-        var values =  hashtable.getValues(key)
-        for value <- values do
-            print("{}-",value)
-        end
-    end
-    println(" ")
-end
-
-active class AC
-    def ext(hashtable : Bighash[String, int], i:int) : unit
-        repeat j <- 20 do
-            hashtable.extend("5000",i)
-            hashtable.extend("5000",i)
-            hashtable.extend("5000",i)
-        end
-    end
-end
-
-fun dataInput() : String
-    "The Programming Languages Group at Uppsala University is developing a programming language called Encore.
-    Encore is a object oriented language with the actor model and a focus on parallelism.
-    The compiler is written in Haskell and translates Encore code to C code, which can then be compiled with a C compiler.
-    The project assignment is to extend the features of Encore and implement a library for Bigvars.
-    'Arrays in Encore are stored in one actor resulting in operations on arrays being executed sequentially.
-    Encore is also lacking syntactic support for easy programming of data structures distributed across actors.
-    Bigvars will be a data type with a collection of values that are distributed among many actors.
-    Operations on Bigvars could therefor be executed in parallel.
-    Bigvars would also make it easier syntactically for the programer to programming with big collections of data.
-    For example if you have an Bigvar of customer objects,
-    then doing `.account` would automatically apply the `.account` method to all customers.
-    One possible implementation of Bigvars in Encore would be to split the data between many
-    actors and have all those actors report to other actors that act like supervisors.
-    The supervisors would coordinate all workers and hold meta information about specific parts of the Bigvar.
-    I will start the project with researching similar implementation in other languages, like Julias distributed arrays and Java 8 parallel streams.
-    I will then decide how to best implement Bigvars in Encore.
-    Most of the time will be spent on the actually implementation, Bigvars will be implemented as a library written in Encore.
-    The first step of the implementation part will be to provide support for distributed arrays with basic array functionality
-    and with a fixed number of underlying actors. The second step will be to have a dynamic number of underlaying actors and add
-    some advanced functionality like object method calls and math functions. The third step will be to provide similar support
-    as for distributed arrays to distributed Hash-tables. Lastly research if syntactical support from the encore compiler is
-    needed and if it is devise a syntax, a compilation scheme and implement it. Also investigate and possible implement support
-    for more datatypes such as distributed Sets. Tests and measurements of my implementation is also a priority.
-    The Programming Languages Group at Uppsala University is developing a programming language called Encore.
-    Encore is a object oriented language with the actor model and a focus on parallelism.
-    The compiler is written in Haskell and translates Encore code to C code, which can then be compiled with a C compiler.
-    The project assignment is to extend the features of Encore and implement a library for Bigvars.
-    'Arrays in Encore are stored in one actor resulting in operations on arrays being executed sequentially.
-    Encore is also lacking syntactic support for easy programming of data structures distributed across actors.
-    Bigvars will be a data type with a collection of values that are distributed among many actors.
-    Operations on Bigvars could therefor be executed in parallel.
-    Bigvars would also make it easier syntactically for the programer to programming with big collections of data.
-    For example if you have an Bigvar of customer objects,
-    then doing `.account` would automatically apply the `.account` method to all customers.
-    One possible implementation of Bigvars in Encore would be to split the data between many
-    actors and have all those actors report to other actors that act like supervisors.
-    The supervisors would coordinate all workers and hold meta information about specific parts of the Bigvar.
-    I will start the project with researching similar implementation in other languages, like Julias distributed arrays and Java 8 parallel streams.
-    I will then decide how to best implement Bigvars in Encore.
-    Most of the time will be spent on the actually implementation, Bigvars will be implemented as a library written in Encore.
-    The first step of the implementation part will be to provide support for distributed arrays with basic array functionality
-    and with a fixed number of underlying actors. The second step will be to have a dynamic number of underlaying actors and add
-    some advanced functionality like object method calls and math functions. The third step will be to provide similar support
-    as for distributed arrays to distributed Hash-tables. Lastly research if syntactical support from the encore compiler is
-    needed and if it is devise a syntax, a compilation scheme and implement it. Also investigate and possible implement support
-    for more datatypes such as distributed Sets. Tests and measurements of my implementation is also a priority.
-    end"
-end
-
-local trait HashCode
-  require var hash_code : uint
-  def hash_adress() : uint
-    EMBED (int)
-      // Hashing-key, can be any random bytes
-      uint8_t k[16] = {
-          0x00,0x01,0x02,0x03,0x04,0x05,0x06,0x07, // k0
-          0x08,0x09,0x0a,0x0b,0x0c,0x0d,0x0e,0x0f  // k1
-      };
-
-      // Allocate 8 bytes on the stack for the hashcode
-      uint8_t hash[8];
-
-      // Retrieve adress of this object
-      uintptr_t adress = (uintptr_t) _this;
-
-      // Convert the adress to an uint8_t-array
-      // WARNING: Assumes little endian!
-      size_t ptr_size = sizeof(uintptr_t);
-      uint8_t adress_arr[ptr_size];
-      for(int i = 0; i < ptr_size; ++i) {
-          adress_arr[i] = (uint8_t)((adress) >> i*8);
-      }
-
-      // Compute the hash value
-      // WARNING: size_t may be larger than uint64_t !!!
-      siphash(hash, adress_arr, (uint64_t) ptr_size, k);
-
-      // Return the value to the caller
-      U8TO64_LE(hash);
-    END
-  end
-
-  def get_hash() : uint
-    this.hash_code
-  end
-
-  def equals(other : HashCode) : bool
-    this.hash_code == other.get_hash()
-  end
 end

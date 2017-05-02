@@ -186,6 +186,17 @@ active class Worker[k,v]
         end
     end
 
+    def reducer(r:(k,[v]) -> (k,v),bighash:Bighash[k,v]) : unit
+        repeat i <- this.tableSize do
+            if this.table(i).notEmpty() then
+                var result = this.table(i).reduce(r)
+                var key = result.0
+                var value = result.1
+                bighash.put(key,value)
+            end
+        end
+    end
+
     def generateHash(key:k) : uint
         var k = key
         this.siphash.hash(this.hashFunction(k))

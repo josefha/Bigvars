@@ -96,6 +96,13 @@ linear class Bighash[k,v]
         this.supervisor.mapper(m,consume c)
     end
 
+    def reducer(r:(k,[v]) -> (k,v),b:Bighash[k,v]) : unit
+        var c = b.copy()
+        this.supervisor.reducer(r,consume c)
+        ()
+    end
+
+
     def getInfo() : unit
         this.supervisor.getInfo()
     end
