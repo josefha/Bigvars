@@ -6,7 +6,7 @@ import Siphash
 import Hasher
 import Workerh
 
-local class Supervisor[k,v] : Hasher
+linear class Supervisor[k,v]
     var numOfWorkers: int
     var workers : [(Worker[k,v])]
     var workerSize : int
@@ -31,7 +31,7 @@ local class Supervisor[k,v] : Hasher
         supr.tableSize = this.tableSize
         supr.workerSize = this.workerSize
         supr.numOfWorkers = this.numOfWorkers
-        supr
+        consume supr
     end
 
     def initTable() : unit
@@ -43,6 +43,15 @@ local class Supervisor[k,v] : Hasher
     def generateHash(key:k) : uint
         --val pointer = EMBED (uint) (uint64_t) #{key}.p; END
         this.siphash.hash(this.hashFunction(key))
+    end
+
+    def modulo(value : uint, mod : uint) : uint
+      EMBED (uint)
+        uint64_t value = (uint64_t) #{value};
+              uint64_t mod   = (uint64_t) #{mod};
+              (value % mod);
+
+      END
     end
 
     def put(key:k,value:v) : Fut[unit]
@@ -194,12 +203,10 @@ local class Supervisor[k,v] : Hasher
         get(this.workers(workerID) ! getValues(key,hash))
     end
 
-    def mapper(m:(k,v)->[(v,k)]) : [Fut[[[(v,k)]]]]
-        var result = new[Fut[[[(v,k)]]]](this.numOfWorkers)
+    def mapper(m:(k,v)->[(v,k)]) : unit
         repeat i <- this.numOfWorkers do
-            result(i) = this.workers(i) ! mapper(m)
+            this.workers(i) ! mapper(m)
         end
-        result
     end
 
     def getInfo() : unit

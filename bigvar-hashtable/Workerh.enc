@@ -5,7 +5,7 @@ import HashEntry
 import Siphash
 import Hasher
 
-active class Worker[k,v] : Hasher
+active class Worker[k,v]
     var id : int
     var tableSize : int
     var numberOfElements: int
@@ -20,6 +20,15 @@ active class Worker[k,v] : Hasher
         this.id = id
         this.siphash = new Siphash()
         this.initTable()
+    end
+
+    def modulo(value : uint, mod : uint) : uint
+      EMBED (uint)
+        uint64_t value = (uint64_t) #{value};
+              uint64_t mod   = (uint64_t) #{mod};
+              (value % mod);
+
+      END
     end
 
     def initTable() : unit
@@ -163,18 +172,12 @@ active class Worker[k,v] : Hasher
     end
 
     -- types here...
-    def mapper(m:(k,v)->[(v,k)]) : [[(v,k)]]
-
-        var pairs = new[[(v,k)]](|this.keys()|)
-        var index = 0
-
+    def mapper(m:(k,v)->[(v,k)]) : unit
         repeat i <- this.tableSize do
             if this.table(i).notEmpty() then
-                pairs(index) = this.table(i).apply(m)
-                index += 1
+                this.table(i).apply(m)
             end
         end
-        pairs
     end
 
     def generateHash(key:k) : uint

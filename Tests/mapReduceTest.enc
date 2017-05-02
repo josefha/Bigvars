@@ -20,7 +20,13 @@ active class Main
         -- d = 5
         --
 
-        var data = generateFromStringArray(["a b c a b c c c","a a b a", "b b b"])--, "a a","b b","c b", "b d", "c d d d","d c b  a e"])--,"vad du hej hej","asdasd jkjk jka asd påok", "lkas asdkllkj hej amklkljqwsd", "agfasdgd dfsg"]) -- bigvar
+
+        var data = new Bighash[int,String](fun(k:int) => intID(k))
+
+        repeat i <- |input| do
+            data.put(i,input(i))
+        end
+        --, "a a","b b","c b", "b d", "c d d d","d c b  a e"])--,"vad du hej hej","asdasd jkjk jka asd påok", "lkas asdkllkj hej amklkljqwsd", "agfasdgd dfsg"]) -- bigvar
 
         var stringID = fun(k:String) => stringID_NEW(k)
         var intID = fun(k:int) => intID(k)
@@ -30,50 +36,17 @@ active class Main
         var mapf = fun(key:int,value:String) => map(key,value)
         var reducef = fun(key:String,values:[int]) => reduce(key,values)
         -- Running
-        var result = mapReduce.run(data, mapf, reducef)
+        mapReduce.run(consume data, mapf, reducef)
 
-
-        var bighash = new Bighash[String,int](stringID)
-        --[Fut[[[(v,k)]]]]
-        for workerResult <- result do
-            --Fut[[[(v,k)]]]
-            var workerData = get(workerResult)
-            --[[(v,k)]]
-            repeat i <- |workerData| do
-                for pairs <- workerData do
-                    --[(v,k)]
-
-                    for pair <- pairs do
-                        println(pair)
-                        bighash.extend(pair.0,pair.1)
-                    end
-                end
-            end
-        end
-
-        var keys = bighash.keys()
-
-        repeat i <- |keys| do
-            var values = bighash.getValues(keys(i))
-
-            var count = 0
-            for value <- values do
-                count += 1
-            end
-            println("    {} --  {}", keys(i), count)
-        end
         ()
     end
 end
 
 fun map(key:int,value:String) : [(String,int)]
-    println("\n --------------------")
     var words = value.split(" ")
     var result = new[(String,int)](|words|)
-    print("\n'{}' - ",value)
     repeat i <- |words| do
         result(i) = (words(i),1)
-        print(result(i))
     end
 
     result
@@ -87,66 +60,46 @@ fun reduce(key:String,values:[int]) : (String,int)
     (key,sum)
 end
 
-local class Str : HashCode
-    var hash_code : uint
-    def init(str:String) : unit
-        var stringID = fun(k:String) => EMBED (uint) (uint64_t) #{k.getData()}; END
-        this.hash_code = stringID(str)
+fun testHash() : unit
+    ()
+    var hashtable = new Bighash[String, int](fun(k:String) => stringID_NEW(k))
+
+    --var hashtable2 = hashtable.copy()
+    --var hashtable3 = hashtable2.copy()
+
+    var key1 = "1000"
+    var key2 = "111"
+    var key3 = "222222"
+    var key4 = "555555"
+    var key5 = "111"
+    var key6 = "1000"
+
+    hashtable.extend("5000",333333)
+    hashtable.extend("5000",444444)
+
+    var actor1 = new AC
+    --actor1 ! ext(hashtable2,1000)
+
+    var actor2 = new AC
+    --actor2 ! ext(hashtable2,4000)
+
+
+    var keys = hashtable.keys() --getValues("11")
+    for key <- keys do
+        print("\n {} values: ", key)
+        var values =  hashtable.getValues(key)
+        for value <- values do
+            print("{}-",value)
+        end
     end
 end
 
-fun testHash() : unit
-    ()
-    -- var hashtable = new Bighash[String, int](fun(k:String) => stringID_NEW(k))
-    --
-    --
-    --
-    --
-    -- var key1 = new Str("1000")
-    -- var key2 = new Str("111")
-    -- var key3 = new Str("222222")
-    -- var key4 = new Str("555555")
-    -- var key5 = new Str("111")
-    -- var key6 = new Str("1000")
-    --
-    -- var hash = new Siphash()
-    --
-    -- println("1 : {}", hash.hash(key1.get_hash()))
-    -- println("2 : {}", hash.hash(key2.get_hash()))
-    -- println("3 : {}", hash.hash(key3.get_hash()))
-    -- println("4 : {}", hash.hash(key4.get_hash()))
-    -- println("5 : {}", hash.hash(key5.get_hash()))
-    -- println("6 : {}", hash.hash(key6.get_hash()))
-
-
-    --
-    -- --var pointer1 = EMBED (uint) (uint64_t) #{key1.getData()}; END
-    --
-    -- hashtable.put("10",11111)
-    -- hashtable.put(key2,21222)
-    -- hashtable.extend("10",333333)
-    -- hashtable.extend("11",444444)
-    -- hashtable.extend("323",444444)
-    -- -- hashtable.extend("53454",444444)
-    -- -- hashtable.extend("123",444444)
-    -- --println(hashtable.get("11"))
-    --
-    -- var values = hashtable.keys() --getValues("11")
-    -- for value <- values do
-    --     print("values: ")
-    --     println(value)
-    --     println(hashtable.get(value))
-    -- end
-    --
-    -- println("----------------------")---------------------------------
-
-    -- var hashtable2 = new Bighash[int, String](fun(k:int) => intID(k))
-    --
-    --
-    -- hashtable2.put(11,"OMG 11111")
-    -- hashtable2.put(123123,"123123123")
-    -- hashtable2.extend(123123,"tjatjat")
-    -- println(hashtable2.get(11))
+active class AC
+    def ext(hashtable : Bighash[String, int], i:int) : unit
+        hashtable.extend("5000",i)
+        hashtable.extend("5000",i)
+        hashtable.extend("5000",i)
+    end
 end
 
 fun dataInput() : String

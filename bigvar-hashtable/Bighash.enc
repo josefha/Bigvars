@@ -17,30 +17,20 @@ uint64_t strHash(char* input) {
 }
 END
 
--- uint64_t strHash(char* input) {
---     uint64_t hash = 5381;
---     char *str = "hallasdasd";
---     int c;
---
---     while ((c = *str++))
---         hash = ((hash << 5) + hash) + c;
---     return hash;
--- }
-
-local class Bighash[k,v]
+linear class Bighash[k,v]
     var supervisor : Supervisor[k,v]
     var f : k -> uint
 
     def init(f: k -> uint) : unit
         this.f = f
-        this.supervisor = new Supervisor[k,v](f:k -> uint)
+        this.supervisor = new Supervisor[k,v](f)
     end
 
     def copy() : Bighash[k,v]
         var f = this.f
         var bighash = new Bighash[k,v](fun(key:k) => f(key))
         bighash.supervisor = this.supervisor.copy()
-        bighash
+        consume bighash
     end
 
     def put(key:k,value:v) : unit
@@ -101,7 +91,7 @@ local class Bighash[k,v]
         this.supervisor.getValues(key)
     end
 
-    def mapper(m:(k,v)->[(v,k)]) : [Fut[[[(v,k)]]]]
+    def mapper(m:(k,v)->[(v,k)]) : unit
         this.supervisor.mapper(m)
     end
 
@@ -110,32 +100,19 @@ local class Bighash[k,v]
     end
 end
 
-fun generateFromStringArray(input:[String]) : Bighash[int,String]
-
-    var bighash = new Bighash[int,String](fun(k:int) => intID(k))
-
-    repeat i <- |input| do
-        --println(i)
-        bighash.put(i,input(i))
-    end
-
-    bighash
-end
-
--- char* source = #{s.getData()};
--- int hash = 0;
--- int i = 0;
--- int length = (int)strlen(source);
--- for (i; i < length; i++)
--- {
---     printf("%c", source[i]);
--- }
+-- fun generateFromStringArray(input:[String]) : Bighash[int,String]
 --
--- return (uint64_t)hash;
---(char *) #{s.getData()};
+--     var bighash = new Bighash[int,String](fun(k:int) => intID(k))
+--
+--     repeat i <- |input| do
+--         --println(i)
+--         bighash.put(i,input(i))
+--     end
+--
+--     bighash
+-- end
 
 fun stringID_NEW(s : String) : uint
-    --print(s)
     --var charpointer = EMBED (uint) (uint64_t) #{s.getData()}; END
     var ans = EMBED (uint) (uint64_t) strHash(#{s.getData()}); END
     --println("charpointer = {} -> hash : {}",charpointer,ans)

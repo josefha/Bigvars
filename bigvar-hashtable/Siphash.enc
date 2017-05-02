@@ -121,7 +121,15 @@ BODY
     }
 END
 
-local class Siphash : Hasher
+read class Siphash
+  def modulo(value : uint, mod : uint) : uint
+      EMBED (uint)
+        uint64_t value = (uint64_t) #{value};
+        uint64_t mod   = (uint64_t) #{mod};
+        (value % mod);
+      END
+  end
+
   def hash(id : uint) : uint
     EMBED (uint)
       // Hashing-key, can be any random bytes

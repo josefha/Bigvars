@@ -11,43 +11,22 @@ local class MapReduce[k1,v1,k2,v2,v3]
         this.hasher = hasher
     end
 
-    def run(data:Bighash[k1,v1], m:(k1,v1)->[(v1,k1)], r:(k2,[v2]) -> (k2,v2)): [Fut[[[(v1,k1)]]]] --mapResult --(k2,v2)): Bighash[v1,k1]--[Fut[[[(v1,k1)]]]]
-        var mapResult = data.mapper(m)
+    def run(data:Bighash[k1,v1], m:(k1,v1)->[(v1,k1)], r:(k2,[v2]) -> (k2,v2)): unit
+
+        var result = new Bighash[v1,k1](this.hasher)
+        --var mapResult = data.mapper(m,result)
 
         --var sortedData = this.sort(mapResult)
-
-
-        --mapResult
-        mapResult
+        ()
     end
 
-    def prepare(data:Bighash[k1,v1]) : Bighash[k1,v1]
-        data
-    end
+    -- def prepare(data:Bighash[k1,v1]) : Bighash[k1,v1]
+    --     data
+    -- end
 
     -- def sort(result: [Fut[[[(v1,k1)]]]]) : Bighash[v1,k1]
-    --     var hasher = fun(k:v1) => this.hasher(k)
-    --     var bighash = new Bighash[v1,k1](hasher)
-    --     --[Fut[[[(v,k)]]]]
-    --     for workerResult <- result do
-    --         --Fut[[[(v,k)]]]
-    --         var workerData = get(workerResult)
-    --         --[[(v,k)]]
-    --         repeat i <- |workerData| do
-    --             for pairs <- workerData do
-    --                 --[(v,k)]
-    --                 for pair <- pairs do
-    --                     var key = pair.0
-    --                     var value = pair.1
-    --                     bighash.extend(key,value)
-    --                 end
-    --             end
-    --         end
-    --     end
-    --     bighash
     --end
 
-    --
     -- def reduce() : unit
     --     ()
     -- end
