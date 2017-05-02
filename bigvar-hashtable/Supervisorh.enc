@@ -24,6 +24,16 @@ local class Supervisor[k,v] : Hasher
         this.initTable()
     end
 
+    def copy() : Supervisor[k,v]
+        var f = this.hashFunction
+        var supr = new Supervisor[k,v](fun(key:k) => f(key))
+        supr.workers = this.workers
+        supr.tableSize = this.tableSize
+        supr.workerSize = this.workerSize
+        supr.numOfWorkers = this.numOfWorkers
+        supr
+    end
+
     def initTable() : unit
         repeat i <- this.numOfWorkers do
             this.workers(i) = new Worker[k,v](this.workerSize,i,this.hashFunction)
@@ -31,9 +41,8 @@ local class Supervisor[k,v] : Hasher
     end
 
     def generateHash(key:k) : uint
-        var k = key
         --val pointer = EMBED (uint) (uint64_t) #{key}.p; END
-        this.siphash.hash(this.hashFunction(k))
+        this.siphash.hash(this.hashFunction(key))
     end
 
     def put(key:k,value:v) : Fut[unit]

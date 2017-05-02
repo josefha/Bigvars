@@ -47,7 +47,11 @@ local class HashEntry[k,v]
 
     -- Functions to use for MapRedece Framwork
 
-    -- Need a lock here..
+    def apply(m:(k,v)->[(v,k)]) : [(v,k)]
+        m(this.key,this.getValue())
+    end
+
+
     def extend(key:k,value:v,hashValue:uint) : unit
         this.size += 1
         this.hashValue = hashValue
@@ -67,7 +71,6 @@ local class HashEntry[k,v]
     def getValues() : [v]
         var elements = new[v](this.size)
         repeat i <- this.size do
-            println("")
             match this.values.element_at(i) with
                 case Just(element) => elements(i) = element
             end

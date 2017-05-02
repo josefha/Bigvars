@@ -164,13 +164,15 @@ active class Worker[k,v] : Hasher
 
     -- types here...
     def mapper(m:(k,v)->[(v,k)]) : [[(v,k)]]
-        var keys = this.keys()
-        var elements = this.elements()
 
-        var pairs = new[[(v,k)]](|keys|)
+        var pairs = new[[(v,k)]](|this.keys()|)
+        var index = 0
 
-        repeat i <- |keys| do
-            pairs(i) = m(keys(i),elements(i))
+        repeat i <- this.tableSize do
+            if this.table(i).notEmpty() then
+                pairs(index) = this.table(i).apply(m)
+                index += 1
+            end
         end
         pairs
     end

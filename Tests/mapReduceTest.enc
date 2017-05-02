@@ -10,99 +10,72 @@ END
 
 active class Main
     def main() : unit
-        println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
+        --println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
         testHash()
         --
-        -- var input = dataInput().split("\n")
+        var input = dataInput().split("\n")
+        -- a = 5
+        -- b = 7
+        -- c = 5
+        -- d = 5
         --
-        -- var data = generateFromStringArray(["hej hej h h h jag heter josef"])--,"vad du hej hej","asdasd jkjk jka asd påok", "lkas asdkllkj hej amklkljqwsd", "agfasdgd dfsg"]) -- bigvar
-        --
-        -- var stringID = fun(k:String) => EMBED (uint) (uint64_t) #{k.getData()}; END
-        -- var intID = fun(k:int) => intID(k)
-        --
-        -- var mapReduce = new MapReduce[int,String,String,int,int](stringID)
-        --
-        -- var mapf = fun(key:int,value:String) => map(key,value)
-        -- var reducef = fun(key:String,values:[int]) => reduce(key,values)
-        -- -- Running
-        -- var result = mapReduce.run(data, mapf, reducef)
-        --
-        -- -----------------------
-        --
-        --
-        -- var bighash = new Bighash[String,int](stringID)
-        -- --[Fut[[[(v,k)]]]]
-        -- for workerResult <- result do
-        --     --Fut[[[(v,k)]]]
-        --     var workerData = get(workerResult)
-        --     --[[(v,k)]]
-        --     repeat i <- |workerData| do
-        --         for pairs <- workerData do
-        --             --[(v,k)]
-        --             for pair <- pairs do
-        --                 println(pair)
-        --                 var key = pair.0
-        --                 println(key.equals("hej"))
-        --                 println(key)
-        --                 var value:int = pair.1
-        --
-        --                 if (false) then
-        --                     bighash.extend("hej",1)
-        --                 else
-        --                     bighash.extend(key,1)
-        --                 end
-        --             end
-        --         end
-        --     end
-        -- end
-        --
-        -- var hej = "hej"
-        -- var hej2 = "hej"
-        -- bighash.extend("hej",2)
-        -- bighash.extend(hej2,5)
-        -- bighash.extend(hej,3)
-        --
-        -- var f = fun(p:String) => bighash.extend(p,4)
-        -- f("hej")
-        --
-        -- println(stringID(hej))
-        -- --
-        -- var keys = bighash.keys()
-        -- println("KEYS LEN {}", |keys| )
-        --
-        -- for key <- keys do
-        --     println(key)
-        -- end
-        -- println("-----")
-        --
-        -- var siphash = new Siphash()
-        --
-        -- repeat i <- |keys| do
-        --     var values = bighash.getValues(keys(i))
-        --     var s = keys(i)
-        --     print("\n|{}|, hash : {}", keys(i), stringID(s))
-        --     for value <- values do
-        --         print(" <- {}",value)
-        --     end
-        --     println("")
-        -- end
-        --
-        -- println("------------------------")
+
+        var data = generateFromStringArray(["a b c a b c c c","a a b a", "b b b"])--, "a a","b b","c b", "b d", "c d d d","d c b  a e"])--,"vad du hej hej","asdasd jkjk jka asd påok", "lkas asdkllkj hej amklkljqwsd", "agfasdgd dfsg"]) -- bigvar
+
+        var stringID = fun(k:String) => stringID_NEW(k)
+        var intID = fun(k:int) => intID(k)
+
+        var mapReduce = new MapReduce[int,String,String,int,int](stringID)
+
+        var mapf = fun(key:int,value:String) => map(key,value)
+        var reducef = fun(key:String,values:[int]) => reduce(key,values)
+        -- Running
+        var result = mapReduce.run(data, mapf, reducef)
+
+
+        var bighash = new Bighash[String,int](stringID)
+        --[Fut[[[(v,k)]]]]
+        for workerResult <- result do
+            --Fut[[[(v,k)]]]
+            var workerData = get(workerResult)
+            --[[(v,k)]]
+            repeat i <- |workerData| do
+                for pairs <- workerData do
+                    --[(v,k)]
+
+                    for pair <- pairs do
+                        println(pair)
+                        bighash.extend(pair.0,pair.1)
+                    end
+                end
+            end
+        end
+
+        var keys = bighash.keys()
+
+        repeat i <- |keys| do
+            var values = bighash.getValues(keys(i))
+
+            var count = 0
+            for value <- values do
+                count += 1
+            end
+            println("    {} --  {}", keys(i), count)
+        end
         ()
     end
 end
 
--- fun test(k:String) : uint
---     var key = k
---     test
--- end
--- wordCount
 fun map(key:int,value:String) : [(String,int)]
+    println("\n --------------------")
     var words = value.split(" ")
     var result = new[(String,int)](|words|)
+    print("\n'{}' - ",value)
     repeat i <- |words| do
         result(i) = (words(i),1)
+        print(result(i))
     end
+
     result
 end
 
@@ -123,23 +96,29 @@ local class Str : HashCode
 end
 
 fun testHash() : unit
-    var hashtable = new Bighash[String, int](fun(k:String) => stringID(k))
+    ()
+    -- var hashtable = new Bighash[String, int](fun(k:String) => stringID_NEW(k))
+    --
+    --
+    --
+    --
+    -- var key1 = new Str("1000")
+    -- var key2 = new Str("111")
+    -- var key3 = new Str("222222")
+    -- var key4 = new Str("555555")
+    -- var key5 = new Str("111")
+    -- var key6 = new Str("1000")
+    --
+    -- var hash = new Siphash()
+    --
+    -- println("1 : {}", hash.hash(key1.get_hash()))
+    -- println("2 : {}", hash.hash(key2.get_hash()))
+    -- println("3 : {}", hash.hash(key3.get_hash()))
+    -- println("4 : {}", hash.hash(key4.get_hash()))
+    -- println("5 : {}", hash.hash(key5.get_hash()))
+    -- println("6 : {}", hash.hash(key6.get_hash()))
 
-    var key1 = new Str("1000")
-    var key2 = new Str("111")
-    var key3 = new Str("222222")
-    var key4 = new Str("555555")
-    var key5 = new Str("111")
-    var key6 = new Str("1000")
 
-    var hash = new Siphash()
-
-    println("1 : {}", hash.hash(key1.get_hash()))
-    println("2 : {}", hash.hash(key2.get_hash()))
-    println("3 : {}", hash.hash(key3.get_hash()))
-    println("4 : {}", hash.hash(key4.get_hash()))
-    println("5 : {}", hash.hash(key5.get_hash()))
-    println("6 : {}", hash.hash(key6.get_hash()))
     --
     -- --var pointer1 = EMBED (uint) (uint64_t) #{key1.getData()}; END
     --
