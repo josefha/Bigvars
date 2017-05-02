@@ -6,6 +6,8 @@ import Siphash
 import Hasher
 import Workerh
 
+import Bighash
+
 linear class Supervisor[k,v]
     var numOfWorkers: int
     var workers : [(Worker[k,v])]
@@ -203,10 +205,17 @@ linear class Supervisor[k,v]
         get(this.workers(workerID) ! getValues(key,hash))
     end
 
-    def mapper(m:(k,v)->[(v,k)]) : unit
+    def mapper(m:(k,v)->[(v,k)], bighash:Bighash[v,k]) : unit
+        var futs = new[Fut[unit]](this.numOfWorkers)
         repeat i <- this.numOfWorkers do
-            this.workers(i) ! mapper(m)
+            var bighashCopy = bighash.copy()
+            futs(i) = this.workers(i) ! mapper(m,consume bighashCopy)
         end
+
+        repeat i <- this.numOfWorkers do
+            get(futs(i))
+        end
+        
     end
 
     def getInfo() : unit

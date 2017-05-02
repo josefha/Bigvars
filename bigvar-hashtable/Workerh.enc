@@ -5,6 +5,8 @@ import HashEntry
 import Siphash
 import Hasher
 
+import Bighash
+
 active class Worker[k,v]
     var id : int
     var tableSize : int
@@ -172,17 +174,20 @@ active class Worker[k,v]
     end
 
     -- types here...
-    def mapper(m:(k,v)->[(v,k)]) : unit
+    def mapper(m:(k,v)->[(v,k)], bighash:Bighash[v,k]) : unit
         repeat i <- this.tableSize do
             if this.table(i).notEmpty() then
-                this.table(i).apply(m)
+                for result <- this.table(i).apply(m) do
+                    var key = result.0
+                    var value = result.1
+                    bighash.extend(key,value)
+                end
             end
         end
     end
 
     def generateHash(key:k) : uint
         var k = key
-        --val pointer = EMBED (uint) (uint64_t) #{key}.p; END
         this.siphash.hash(this.hashFunction(k))
     end
 end

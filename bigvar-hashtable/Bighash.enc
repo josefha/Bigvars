@@ -91,8 +91,9 @@ linear class Bighash[k,v]
         this.supervisor.getValues(key)
     end
 
-    def mapper(m:(k,v)->[(v,k)]) : unit
-        this.supervisor.mapper(m)
+    def mapper(m:(k,v)->[(v,k)], b:Bighash[v,k]) : unit
+        var c = b.copy()
+        this.supervisor.mapper(m,consume c)
     end
 
     def getInfo() : unit

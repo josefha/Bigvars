@@ -11,13 +11,16 @@ local class MapReduce[k1,v1,k2,v2,v3]
         this.hasher = hasher
     end
 
-    def run(data:Bighash[k1,v1], m:(k1,v1)->[(v1,k1)], r:(k2,[v2]) -> (k2,v2)): unit
+    def run(data:Bighash[k1,v1], m:(k1,v1)->[(v1,k1)], r:(k2,[v2]) -> (k2,v2)): Bighash[v1,k1]
 
         var result = new Bighash[v1,k1](this.hasher)
-        --var mapResult = data.mapper(m,result)
+        var sender = result.copy()
+        data.mapper(m,consume sender) -- waits on all workers
+
+
 
         --var sortedData = this.sort(mapResult)
-        ()
+        consume result
     end
 
     -- def prepare(data:Bighash[k1,v1]) : Bighash[k1,v1]

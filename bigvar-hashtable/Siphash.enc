@@ -121,7 +121,7 @@ BODY
     }
 END
 
-read class Siphash
+linear class Siphash
   def modulo(value : uint, mod : uint) : uint
       EMBED (uint)
         uint64_t value = (uint64_t) #{value};

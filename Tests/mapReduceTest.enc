@@ -12,9 +12,9 @@ END
 active class Main
     def main() : unit
         --println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n")
-        testHash()
+        --testHash()
         --
-        var input = dataInput().split("\n")
+        var input = ["a","b b","c b", "b d","a","a","a hej","b","b a a","hej hej hej"]--, "c d d d","d c b  a e"] -- dataInput().split("\n")
         -- a = 5
         -- b = 7
         -- c = 5
@@ -37,7 +37,25 @@ active class Main
         var mapf = fun(key:int,value:String) => map(key,value)
         var reducef = fun(key:String,values:[int]) => reduce(key,values)
         -- Running
-        mapReduce.run(consume data, mapf, reducef)
+
+        var result = mapReduce.run(consume data, mapf, reducef)
+        --
+        -- var keys = result.keys()
+        -- for key <- keys do
+        --     print("\n {} values: ", key)
+        --     var values =  result.getValues(key)
+        --     for value <- values do
+        --         print("{}-",value)
+        --     end
+        -- end
+        var keys = result.keys()
+        for key <- keys do
+            print("\n {}: ", key)
+            var value = reduce(key,result.getValues(key))
+            print("{}-",value)
+        end
+
+        println("\n end")
 
         ()
     end
