@@ -5,6 +5,7 @@ import Siphash
 
 EMBED
   #include <stdint.h> // uintptr_t
+  #include <unistd.h>
 BODY
 END
 
@@ -64,8 +65,8 @@ fun testHash() : unit
     ()
     var hashtable = new Bighash[String, int](fun(k:String) => stringID_NEW(k))
 
-    --var hashtable2 = hashtable.copy()
-    --var hashtable3 = hashtable2.copy()
+    var hashtable2 = hashtable.copy()
+    var hashtable3 = hashtable2.copy()
 
     var key1 = "1000"
     var key2 = "111"
@@ -74,15 +75,21 @@ fun testHash() : unit
     var key5 = "111"
     var key6 = "1000"
 
-    hashtable.extend("5000",333333)
-    hashtable.extend("5000",444444)
+    hashtable.extend("5000",1)
+    hashtable.extend("5000",1)
 
     var actor1 = new AC
-    --actor1 ! ext(hashtable2,1000)
+    var wait1 = actor1 ! ext(consume hashtable2,2)
 
     var actor2 = new AC
-    --actor2 ! ext(hashtable2,4000)
+    var wait2 = actor2 ! ext(consume hashtable3,3)
 
+    get(wait1)
+    get(wait2)
+
+    hashtable.extend("5000",1)
+    hashtable.extend("5000",1)
+    hashtable.extend("5000",1)
 
     var keys = hashtable.keys() --getValues("11")
     for key <- keys do
@@ -92,13 +99,16 @@ fun testHash() : unit
             print("{}-",value)
         end
     end
+    println(" ")
 end
 
 active class AC
     def ext(hashtable : Bighash[String, int], i:int) : unit
-        hashtable.extend("5000",i)
-        hashtable.extend("5000",i)
-        hashtable.extend("5000",i)
+        repeat j <- 20 do
+            hashtable.extend("5000",i)
+            hashtable.extend("5000",i)
+            hashtable.extend("5000",i)
+        end
     end
 end
 
