@@ -5,6 +5,7 @@
 * Adding all steps in MapReduce
 * correct rehashing - only in workers?
 * more supervisors?
+* correct types in mapper/reducer in bighash
 
 ### Notes:
 * Mining of massive datasets: book.
