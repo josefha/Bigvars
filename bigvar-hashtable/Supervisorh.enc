@@ -7,7 +7,7 @@ import Workerh
 
 import Bighash
 
-linear class Supervisor[k,v]
+linear class Supervisor[sharable k,sharable v]
     var numOfWorkers: int
     var workers : [(Worker[k,v])]
     var workerSize : int

@@ -7,6 +7,7 @@
 * more supervisors?
 
 ### Notes:
+   * .to_lower()
    * Mining of massive datasets: book.
    * Language framework Spark.
 
