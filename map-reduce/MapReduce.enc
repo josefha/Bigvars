@@ -3,7 +3,7 @@ module MapReduce
 
 import Bighash
 
-local class MapReduce[k1,v1,k2,v2,v3]
+local class MapReduce[k1,v1,k2,v2]
 
     var hasher : v1 -> uint
 
