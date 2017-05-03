@@ -1,11 +1,31 @@
-# bigvar implementation in Encore
+# Bigvars in Encore
+
+## Todo:
+* Real tests
+* Adding all steps in MapReduce
+* correct rehashing - only in workers?
+* more supervisors?
 
 ### Notes:
-   * future chaining
-   * mapreduce framework
-   * Gustavs master thesis:
    * Mining of massive datasets: book.
    * Language framework Spark.
+
+### BigHash functions:
+   * put(k,v) : unit
+   * remove(k) : unit
+   * get(k) : v
+   * getMany([k]) : [v]
+   * keys() : [k]
+   * elements() : [v]
+   * contains(v) : bool
+   * rehash() : unit
+   * clear() : unit
+
+   * extend(v) : unit
+   * extendAll(k, [v]) : unit
+   * getValues() : [v]
+   * mapper()
+   * reducer()
 
 ### List of methods for Prototype 1 for Arrays:
 
@@ -25,23 +45,6 @@
 * onesbigvar(size:int) : Bigvar[int]
 * rangebigvar(l1:int, l2:int) : Bigvar[int]
 
-### List of methods for Prototype 1 for HashTable:
-* put(k,v) : unit
-* remove(k) : unit
-* get(k) : v
-* getMany([k]) : [v]
-* keys() : [k]
-* elements() : [v]
-* contains(v) : bool
-* rehash() : unit
-* clear() : unit
-* getInfo() : unit
-
-## Todo arrays:
-* atindexes([int]) -> [t]
-* getintdata(f: t -> int) : Bigvar[int]
-* fold(): t
-
-## functionality
+## functionality todo arrays
 * automate redistribution
 * different number of actors depending on size
