@@ -1,5 +1,28 @@
 module ExampleText
 
+EMBED
+uint64_t strHash(char* input);
+BODY
+uint64_t strHash(char* input) {
+    uint64_t hash = 5381;
+    char *str = input;
+    int c;
+
+    while ((c = *str++))
+        hash = ((hash << 5) + hash) + c;
+    return hash;
+}
+END
+
+fun stringID_NEW(s : String) : uint
+    var ans = EMBED (uint) (uint64_t) strHash(#{s.getData()}); END
+    ans
+end
+
+fun intID(key : int) : uint
+    EMBED (uint) (uint64_t) #{key}; END
+end
+
 fun specText() : String
     "The Programming Languages Group at Uppsala University is developing a programming language called Encore.
     Encore is a object oriented language with the actor model and a focus on parallelism.

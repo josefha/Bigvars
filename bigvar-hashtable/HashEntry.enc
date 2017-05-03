@@ -25,12 +25,18 @@ local class HashEntry[k,v]
         this.size = 1
     end
 
+    def remove() : unit
+        this.hasEntry = false
+        this.values = new LinkedList[v]()
+        this.size = 0
+    end
+
     def notEmpty() : bool
         this.hasEntry
     end
 
-    def empty() : bool
-        !this.hasEntry
+    def isEmpty() : bool
+        not this.hasEntry
     end
 
     def getHash() : uint
@@ -75,7 +81,7 @@ local class HashEntry[k,v]
         this.hasEntry = true
         this.values.append_all(values)
     end
-    --
+
     def getValues() : [v]
         var elements = new[v](this.size)
         repeat i <- this.size do

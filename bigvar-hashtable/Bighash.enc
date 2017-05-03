@@ -3,20 +3,6 @@ module Bighash
 
 import Supervisorh
 
-EMBED
-uint64_t strHash(char* input);
-BODY
-uint64_t strHash(char* input) {
-    uint64_t hash = 5381;
-    char *str = input;
-    int c;
-
-    while ((c = *str++))
-        hash = ((hash << 5) + hash) + c;
-    return hash;
-}
-END
-
 linear class Bighash[k,v]
     var supervisor : Supervisor[k,v]
     var f : k -> uint
@@ -34,13 +20,14 @@ linear class Bighash[k,v]
     end
 
     def put(key:k,value:v) : unit
-        get(this.supervisor.put(key,value))
+        this.supervisor.put(key,value)
     end
 
     def get(key:k) : v
         this.supervisor.get(key)
     end
 
+    -- not working
     def remove(key:k) : unit
         get(this.supervisor.remove(key))
     end
@@ -99,20 +86,5 @@ linear class Bighash[k,v]
     def reducer(r:(k,[v]) -> (k,v),b:Bighash[k,v]) : unit
         var c = b.copy()
         this.supervisor.reducer(r,consume c)
-        ()
     end
-
-
-    def getInfo() : unit
-        this.supervisor.getInfo()
-    end
-end
-
-fun stringID_NEW(s : String) : uint
-    var ans = EMBED (uint) (uint64_t) strHash(#{s.getData()}); END
-    ans
-end
-
-fun intID(key : int) : uint
-    EMBED (uint) (uint64_t) #{key}; END
 end

@@ -22,17 +22,11 @@ active class Main
         var result = mapReduce.run(consume data, mapf, reducef)
         -----------------------------------------------------
 
-        result.remove("a")
-
         var keys = result.keys()
         for key <- keys do
-            var value = result.get(key)
-            --println("'{}'",value)
+            var value = result.getValues(key)
+            println("{}  [{}]",key,value(0))
         end
-
-        println("end")
-
-        ()
     end
 end
 
