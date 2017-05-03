@@ -5,32 +5,29 @@ import Bighash
 
 local class MapReduce[sharable k1,sharable v1,sharable k2,sharable v2]
 
-    var hasher : v1 -> uint
+    var hasher : k2 -> uint
 
-    def init(hasher: v1 -> uint): unit
+    def init(hasher: k2 -> uint): unit
         this.hasher = hasher
     end
 
-    def run(data:Bighash[k1,v1], m:(k1,v1)->[(v1,k1)], r:(v1,[k1]) -> (v1,k1)): Bighash[v1,k1]
+    def run(data:Bighash[k1,v1], m:(k1,v1)->[(k2,v2)], r:(k2,[v2]) -> (k2,v2)): Bighash[k2,v2]
 
-        var map_result = new Bighash[v1,k1](this.hasher)
+        var map_result = new Bighash[k2,v2](this.hasher)
         var sender = map_result.copy()
-        data.mapper(m,consume sender) -- waits on all workers
-
-        var reduce_result = new Bighash[v1,k1](this.hasher)
+        data.mapper[k2,v2](m,consume sender)
+        --
+        var reduce_result = new Bighash[k2,v2](this.hasher)
         var reduce_c = reduce_result.copy()
         map_result.reducer(r,consume reduce_c)
 
-        --var sortedData = this.sort(mapResult)
         consume reduce_result
+        --new Bighash[k2,v2](this.hasher)
     end
 
     -- def prepare(data:Bighash[k1,v1]) : Bighash[k1,v1]
     --     data
     -- end
-
-    -- def sort(result: [Fut[[[(v1,k1)]]]]) : Bighash[v1,k1]
-    --end
 
     -- def reduce() : unit
     --     ()

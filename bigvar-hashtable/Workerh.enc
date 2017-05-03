@@ -173,10 +173,10 @@ active class Worker[k,v]
     end
 
     ----- MapReduce functions ------
-    def mapper(m:(k,v)->[(v,k)], bighash:Bighash[v,k]) : unit
+    def mapper[k2,v2](m:(k,v)->[(k2,v2)], bighash:Bighash[k2,v2]) : unit
         repeat i <- this.tableSize do
             if this.table(i).notEmpty() then
-                for result <- this.table(i).apply(m) do
+                for result <- this.table(i).map[k2,v2](m) do
                     var key = result.0
                     var value = result.1
                     bighash.extend(key,value)

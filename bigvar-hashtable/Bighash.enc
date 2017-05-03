@@ -78,9 +78,10 @@ linear class Bighash[k,v]
         this.supervisor.getValues(key)
     end
 
-    def mapper(m:(k,v)->[(v,k)], b:Bighash[v,k]) : unit
+    def mapper[k2,v2](m:(k,v)->[(k2,v2)], b:Bighash[k2,v2]) : unit
         var c = b.copy()
-        this.supervisor.mapper(m,consume c)
+        this.supervisor.mapper[k2,v2](m,consume c)
+        ()
     end
 
     def reducer(r:(k,[v]) -> (k,v),b:Bighash[k,v]) : unit
