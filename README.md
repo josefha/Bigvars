@@ -7,28 +7,27 @@
 * more supervisors?
 
 ### Notes:
-   * Mining of massive datasets: book.
-   * Language framework Spark.
+* Mining of massive datasets: book.
+* Language framework Spark.
 
 ### BigHash functions:
-   * put(k,v) : unit
-   * remove(k) : unit
-   * get(k) : v
-   * getMany([k]) : [v]
-   * keys() : [k]
-   * elements() : [v]
-   * contains(v) : bool
-   * rehash() : unit
-   * clear() : unit
+* put(k,v) : unit
+* remove(k) : unit
+* get(k) : v
+* getMany([k]) : [v]
+* keys() : [k]
+* elements() : [v]
+* contains(v) : bool
+* rehash() : unit
+* clear() : unit
 
-   * extend(v) : unit
-   * extendAll(k, [v]) : unit
-   * getValues() : [v]
-   * mapper()
-   * reducer()
+* extend(v) : unit
+* extendAll(k, [v]) : unit
+* getValues() : [v]
+* mapper()
+* reducer()
 
 ### List of methods for Prototype 1 for Arrays:
-
 * array() : [t]
 * at(int) : t
 * print(f: t->s) : unit
