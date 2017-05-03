@@ -20,7 +20,6 @@
 * contains(v) : bool
 * rehash() : unit
 * clear() : unit
-
 * extend(v) : unit
 * extendAll(k, [v]) : unit
 * getValues() : [v]
