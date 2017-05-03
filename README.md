@@ -2,10 +2,10 @@
 
 ## Todo:
 * Real tests
-* Adding all steps in MapReduce
+* Adding all steps in MapReduce [x]
 * correct rehashing - only in workers?
 * more supervisors?
-* correct types in mapper/reducer in bighash
+* correct types in mapper/reducer in bighash [x]
 
 ### Notes:
    * .to_lower()
