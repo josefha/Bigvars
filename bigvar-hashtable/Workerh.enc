@@ -11,6 +11,7 @@ active class Worker[k,v]
     var id : int
     var tableSize : int
     var numberOfElements: int
+    var filledEntries: int
     var table : [HashEntry[k,v]]
     var siphash : Siphash
     var hashFunction : k -> uint
@@ -18,10 +19,18 @@ active class Worker[k,v]
     def init(size: int, id:int, f:k -> uint) : unit
         this.hashFunction = f
         this.numberOfElements = 0
+        this filledEntries = 0
         this.tableSize = size
         this.id = id
         this.siphash = new Siphash()
         this.initTable()
+    end
+
+    def initTable() : unit
+        this.table = new [HashEntry[k,v]](this.tableSize)
+        repeat i <- this.tableSize do
+            this.table(i) = new HashEntry[k,v]()
+        end
     end
 
     def modulo(value : uint, mod : uint) : uint
@@ -33,47 +42,37 @@ active class Worker[k,v]
       END
     end
 
-    def initTable() : unit
-        this.table = new [HashEntry[k,v]](this.tableSize)
-        repeat i <- this.tableSize do
-            this.table(i) = new HashEntry[k,v]()
-        end
-    end
-
-    def getInfo() : unit
-        println("w: {} has: {}/{}", this.id, this.numberOfElements, this.tableSize)
-        --this.numberOfElements
-    end
-
     def put(key:k,value:v,hashValue:uint) : unit
-        if (this.tableSize - this.numberOfElements < this.tableSize/4) then
+        if (this.tableSize - this.filledEntries < this.tableSize/4) then
             this.rehash()
         end
 
-        var hashentry = this.getEntry(key,hashValue)
-
-        if (hashentry.getKey() != key) then
-            this.numberOfElements += 1
-        end
+        var hashentry = this.getEntry(hashValue)
         hashentry.add(key,value,hashValue)
+
+        if (hashentry.empty()) then this.filledEntries += 1 end
     end
 
     def get(key:k,hashValue:uint) : v
-        var hashentry = this.getEntry(key,hashValue)
-        hashentry.getValue()
+        this.getEntry(hashValue).getValue()
     end
 
     def remove(key:k,hashValue:uint) : unit
         var entryID = this.modulo(hashValue,this.tableSize)
-        var hashentry = this.table(entryID)
+
+        println("---------------remove")
+        while ((this.table(entryID).notEmpty()) && (this.table(entryID).getHash() != hashValue)) do
+            entryID = this.modulo(entryID+1,this.tableSize)
+        end
+
         if (hashentry.notEmpty()) then
-            if (hashentry.getKey() == key) then
-                this.numberOfElements -= 1
                 this.table(entryID) = new HashEntry[k,v]()
+                this.filledEntries -= 1
             end
         end
     end
 
+    -- currently not stable with extend().
     def elements() : [v]
         var result = new [v](this.numberOfElements)
         var index = 0
@@ -124,6 +123,7 @@ active class Worker[k,v]
         this.table = newTable
     end
 
+    -- elements() here? needs to be redone.
     def rehash() : unit
         var elements = this.elements()
         var keys = this.keys()
@@ -137,7 +137,7 @@ active class Worker[k,v]
 
     def hasKey(key:k, hashValue:uint) : bool
         var result = false
-        var hashentry = this.getEntry(key,hashValue)
+        var hashentry = this.getEntry(hashValue)
         if hashentry.notEmpty() then
             result = true
         end
@@ -145,35 +145,32 @@ active class Worker[k,v]
     end
 
     def extend(key:k,value:v,hashValue:uint) : unit
-        var hashentry = this.getEntry(key,hashValue)
-        if (hashentry.getKey() != key) then
-            this.numberOfElements += 1
-        end
-
+        var hashentry = this.getEntry(hashValue)
+        this.numberOfElements += 1
         hashentry.extend(key,value,hashValue)
     end
 
     def extendAll(key:k, values:[v],hashValue:uint) : unit
-        var hashentry = this.getEntry(key,hashValue)
+        var hashentry = this.getEntry(hashValue)
         hashentry.extendAll(key,values,hashValue)
     end
 
     def getValues(key:k,hashValue:uint) : [v]
-        var hashentry = this.getEntry(key,hashValue)
+        var hashentry = this.getEntry(hashValue)
         hashentry.getValues()
     end
 
-    def getEntry(key:k,hashValue:uint) : HashEntry[k,v]
+    def getEntry(hashValue:uint) : HashEntry[k,v]
         var entryID = this.modulo(hashValue,this.tableSize)
         var hashentry = this.table(entryID)
-        while ((hashentry.notEmpty()) && (hashentry.getHash() != hashValue)) do --(hashentry.getKey() != key)) do
+        while ((hashentry.notEmpty()) && (hashentry.getHash() != hashValue)) do
             entryID = this.modulo(entryID+1,this.tableSize)
             hashentry = this.table(entryID)
         end
         hashentry
     end
 
-    -- types here...
+    ----- MapRedece functions ------
     def mapper(m:(k,v)->[(v,k)], bighash:Bighash[v,k]) : unit
         repeat i <- this.tableSize do
             if this.table(i).notEmpty() then
@@ -198,7 +195,6 @@ active class Worker[k,v]
     end
 
     def generateHash(key:k) : uint
-        var k = key
-        this.siphash.hash(this.hashFunction(k))
+        this.siphash.hash(this.hashFunction(key))
     end
 end

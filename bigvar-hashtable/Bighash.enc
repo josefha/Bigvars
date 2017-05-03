@@ -108,26 +108,11 @@ linear class Bighash[k,v]
     end
 end
 
--- fun generateFromStringArray(input:[String]) : Bighash[int,String]
---
---     var bighash = new Bighash[int,String](fun(k:int) => intID(k))
---
---     repeat i <- |input| do
---         --println(i)
---         bighash.put(i,input(i))
---     end
---
---     bighash
--- end
-
 fun stringID_NEW(s : String) : uint
-    --var charpointer = EMBED (uint) (uint64_t) #{s.getData()}; END
     var ans = EMBED (uint) (uint64_t) strHash(#{s.getData()}); END
-    --println("charpointer = {} -> hash : {}",charpointer,ans)
     ans
 end
 
---(uint64_t)
 fun intID(key : int) : uint
     EMBED (uint) (uint64_t) #{key}; END
 end

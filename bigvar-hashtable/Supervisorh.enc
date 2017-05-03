@@ -228,13 +228,4 @@ linear class Supervisor[k,v]
             get(futs(i))
         end
     end
-
-    def getInfo() : unit
-        --var totalSize = 0
-        for worker <- this.workers do
-            --totalSize += get(worker ! getInfo())
-            worker ! getInfo()
-        end
-        --println("Total Size: {}/{}", totalSize, this.tableSize)
-    end
 end
