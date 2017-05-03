@@ -5,6 +5,7 @@
 * Adding all steps in MapReduce
 * correct rehashing - only in workers?
 * more supervisors?
+* correct types in mapper/reducer in bighash
 
 ### Notes:
    * .to_lower()
@@ -12,24 +13,22 @@
    * Language framework Spark.
 
 ### BigHash functions:
-   * put(k,v) : unit
-   * remove(k) : unit
-   * get(k) : v
-   * getMany([k]) : [v]
-   * keys() : [k]
-   * elements() : [v]
-   * contains(v) : bool
-   * rehash() : unit
-   * clear() : unit
-
-   * extend(v) : unit
-   * extendAll(k, [v]) : unit
-   * getValues() : [v]
-   * mapper()
-   * reducer()
+* put(k,v) : unit
+* remove(k) : unit
+* get(k) : v
+* getMany([k]) : [v]
+* keys() : [k]
+* elements() : [v]
+* contains(v) : bool
+* rehash() : unit
+* clear() : unit
+* extend(v) : unit
+* extendAll(k, [v]) : unit
+* getValues() : [v]
+* mapper()
+* reducer()
 
 ### List of methods for Prototype 1 for Arrays:
-
 * array() : [t]
 * at(int) : t
 * print(f: t->s) : unit
