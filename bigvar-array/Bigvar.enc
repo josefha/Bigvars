@@ -32,6 +32,10 @@ local class Bigvar[t]
         this.supr().update(f)
     end
 
+    -- def map[t2](f : t -> t2) : Bigvar[t2]
+    --     this.supr().map(f)
+    -- end
+
     def filter(f: t->bool) : Bigvar[t]
         new Bigvar[t](this.supr().filter(f))
     end

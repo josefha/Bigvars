@@ -16,6 +16,10 @@ local class HashEntry[k,v]
         this.size = 0
     end
 
+    def size() : int
+        this.size
+    end
+
     def add(key:k,value:v,hashValue:uint) : unit
         this.hashValue = hashValue
         this.hasEntry = true
