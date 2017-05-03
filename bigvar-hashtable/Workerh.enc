@@ -4,7 +4,9 @@ module Workerh
 import HashEntry
 import Siphash
 
-import Bighash
+import Bighash -- for mapper and reducer
+import Combiner
+
 
 active class Worker[k,v]
     var id : int
@@ -173,14 +175,20 @@ active class Worker[k,v]
     end
 
     ----- MapReduce functions ------
-    def mapper[k2,v2](m:(k,v)->[(k2,v2)], bighash:Bighash[k2,v2]) : unit
+    def mapper[k2,v2](m:(k,v)->[(k2,v2)],r:(k2,[v2]) -> (k2,v2),bighash:Bighash[k2,v2]) : unit
         repeat i <- this.tableSize do
             if this.table(i).notEmpty() then
-                for result <- this.table(i).map[k2,v2](m) do
-                    var key = result.0
-                    var value = result.1
-                    bighash.extend(key,value)
+                var mapresult = this.table(i).map[k2,v2](m)
+                var combiner = new Combiner[k2,v2](|mapresult|)
+
+                for pair <- mapresult do
+                    var hashfunction = bighash.hashFunction()
+                    var hash = hashfunction(pair.0)
+                    combiner.extend(pair.0,pair.1,hash)
                 end
+
+                var result = bighash.copy()
+                combiner.combine(r,consume result)
             end
         end
     end
@@ -192,6 +200,18 @@ active class Worker[k,v]
                 var key = result.0
                 var value = result.1
                 bighash.put(key,value)
+            end
+        end
+    end
+
+    def mapperNoCombiner[k2,v2](m:(k,v)->[(k2,v2)], bighash:Bighash[k2,v2]) : unit
+        repeat i <- this.tableSize do
+            if this.table(i).notEmpty() then
+                for result <- this.table(i).map[k2,v2](m) do
+                    var key = result.0
+                    var value = result.1
+                    bighash.extend(key,value)
+                end
             end
         end
     end

@@ -19,6 +19,10 @@ linear class Bighash[k,v]
         consume bighash
     end
 
+    def hashFunction() : k -> uint
+        this.f
+    end
+
     def put(key:k,value:v) : unit
         this.supervisor.put(key,value)
     end
@@ -78,9 +82,9 @@ linear class Bighash[k,v]
         this.supervisor.getValues(key)
     end
 
-    def mapper[k2,v2](m:(k,v)->[(k2,v2)], b:Bighash[k2,v2]) : unit
+    def mapper[k2,v2](m:(k,v)->[(k2,v2)],r:(k2,[v2]) -> (k2,v2),b:Bighash[k2,v2]) : unit
         var c = b.copy()
-        this.supervisor.mapper[k2,v2](m,consume c)
+        this.supervisor.mapper[k2,v2](m,r,consume c)
         ()
     end
 

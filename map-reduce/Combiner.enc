@@ -1,0 +1,59 @@
+
+module Combiner
+
+import HashEntry
+import Bighash
+
+local class Combiner[sharable k,sharable v]
+    var tableSize : int
+    var table : [HashEntry[k,v]]
+
+    def init(size: int) : unit
+        this.tableSize = size
+        this.table = new[HashEntry[k,v]](size)
+        repeat i <- this.tableSize do
+            this.table(i) = new HashEntry[k,v]()
+        end
+    end
+
+    def combine(reduce:(k,[v]) -> (k,v), bighash:Bighash[k,v]) : unit
+        repeat i <- this.tableSize do
+            var entry = this.table(i)
+            if entry.notEmpty() then
+                var key = entry.getKey()
+                if (entry.size() == 1) then
+                    var value = entry.getValue()
+                    bighash.extend(key,value)
+                else
+                    var values = entry.getValues()
+                    var pair = reduce(key,values)
+                    bighash.extend(key,pair.1)
+                end
+            end
+        end
+    end
+
+    def extend(key:k,value:v,hashValue:uint) : unit
+        var hashentry = this.getEntry(hashValue)
+        hashentry.extend(key,value,hashValue)
+    end
+
+    def getEntry(hashValue:uint) : HashEntry[k,v]
+        var entryID = this.modulo(hashValue,this.tableSize)
+        var hashentry = this.table(entryID)
+        while ((hashentry.notEmpty()) && (hashentry.getHash() != hashValue)) do
+            entryID = this.modulo(entryID+1,this.tableSize)
+            hashentry = this.table(entryID)
+        end
+        hashentry
+    end
+
+    def modulo(value : uint, mod : uint) : uint
+      EMBED (uint)
+        uint64_t value = (uint64_t) #{value};
+              uint64_t mod   = (uint64_t) #{mod};
+              (value % mod);
+
+      END
+    end
+end
