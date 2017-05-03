@@ -2,8 +2,6 @@
 
 module Siphash
 
-import Hasher
-
 EMBED
     #include <stdint.h>
     #include <stdio.h>

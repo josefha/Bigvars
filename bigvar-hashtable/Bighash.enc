@@ -64,7 +64,7 @@ linear class Bighash[k,v]
         this.supervisor.contains(value)
     end
 
-    ------------------------------------
+    ---------------- MapReduce functions -----------------
 
     def extend(key:k, value:v) : unit
         this.supervisor.extend(key,value)

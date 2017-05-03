@@ -3,7 +3,6 @@
 module Supervisorh
 
 import Siphash
-import Hasher
 import Workerh
 
 import Bighash
@@ -184,7 +183,7 @@ linear class Supervisor[k,v]
         result
     end
 
-    -------------------------------------------------------
+    ---------------- MapReduce functions -----------------
 
     def extend(key:k,value:v) : unit
         var hash = this.generateHash(key)

@@ -3,7 +3,6 @@ module Workerh
 
 import HashEntry
 import Siphash
-import Hasher
 
 import Bighash
 
