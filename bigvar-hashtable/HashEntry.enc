@@ -39,10 +39,6 @@ local class HashEntry[k,v]
         this.hasEntry
     end
 
-    def isEmpty() : bool
-        not this.hasEntry
-    end
-
     def getHash() : uint
         this.hashValue
     end

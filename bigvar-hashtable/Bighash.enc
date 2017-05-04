@@ -68,6 +68,10 @@ linear class Bighash[k,v]
         this.supervisor.contains(value)
     end
 
+    def getInfo() : unit
+        this.supervisor.getInfo()
+    end
+
     ---------------- MapReduce functions -----------------
 
     def extend(key:k, value:v) : unit
@@ -85,7 +89,6 @@ linear class Bighash[k,v]
     def mapper[k2,v2](m:(k,v)->[(k2,v2)],r:(k2,[v2]) -> (k2,v2),b:Bighash[k2,v2]) : unit
         var c = b.copy()
         this.supervisor.mapper[k2,v2](m,r,consume c)
-        ()
     end
 
     def reducer(r:(k,[v]) -> (k,v),b:Bighash[k,v]) : unit

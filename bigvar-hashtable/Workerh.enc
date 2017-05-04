@@ -50,9 +50,8 @@ active class Worker[k,v]
     def put(key:k,value:v,hashValue:uint) : unit
         this.resizeIfNeeded()
         var hashentry = this.getEntry(hashValue)
+        if (hashentry.hasEntry == false) then this.filledEntries += 1 end
         hashentry.add(key,value,hashValue)
-
-        if (hashentry.isEmpty()) then this.filledEntries += 1 end
     end
 
     def hasKey(key:k, hashValue:uint) : bool
@@ -104,30 +103,18 @@ active class Worker[k,v]
         this.table = newTable
     end
 
-    -- elements() here? needs to be redone.
-    def rehash() : unit
-        var elements = this.elements()
-        var keys = this.keys()
-        this.doubleSize()
-
-        repeat i <- |elements| do
-            var hash = this.generateHash(keys(i))
-            this.put(keys(i),elements(i),hash)
-        end
-    end
-
     def extend(key:k,value:v,hashValue:uint) : unit
         this.resizeIfNeeded()
         var hashentry = this.getEntry(hashValue)
+        if (hashentry.hasEntry == false) then this.filledEntries += 1 end
         hashentry.extend(key,value,hashValue)
-        if (hashentry.isEmpty()) then this.filledEntries += 1 end
     end
 
 
     def extendAll(key:k, values:[v],hashValue:uint) : unit
         var hashentry = this.getEntry(hashValue)
+        if (hashentry.hasEntry == false) then this.filledEntries += 1 end
         hashentry.extendAll(key,values,hashValue)
-        if (hashentry.isEmpty()) then this.filledEntries += 1 end
     end
 
     def getValues(key:k,hashValue:uint) : [v]
@@ -145,6 +132,46 @@ active class Worker[k,v]
         hashentry
     end
 
+    def resizeIfNeeded() : unit
+        if (this.tableSize - this.filledEntries < this.tableSize/4) then
+            this.rehash()
+        end
+    end
+
+    def rehash() : unit
+        println("Rehashing {}",this.id)
+        var oldTable = this.table
+        this.table = this.newTable()
+
+        repeat i <- |oldTable| do
+            if this.table(i).notEmpty() then
+                var oldEntry = this.table(i)
+                this.replace(oldEntry)
+            end
+        end
+    end
+
+    def replace(oldEntry : HashEntry[k,v]) : unit
+        var hashValue = oldEntry.getHash()
+        var entryID = this.modulo(hashValue,this.tableSize)
+        var hashentry = this.table(entryID)
+        while ((hashentry.notEmpty()) && (hashentry.getHash() != hashValue)) do
+            entryID = this.modulo(entryID+1,this.tableSize)
+            hashentry = this.table(entryID)
+        end
+
+        this.table(entryID) = oldEntry
+    end
+
+    def newTable() : [HashEntry[k,v]]
+        this.tableSize = this.tableSize*2
+        var newTable = new [HashEntry[k,v]](this.tableSize)
+        repeat i <- this.tableSize do
+            newTable(i) = new HashEntry[k,v]()
+        end
+        newTable
+    end
+
     def doubleSize() : unit
         this.filledEntries = 0
         this.tableSize = this.tableSize*2
@@ -153,12 +180,6 @@ active class Worker[k,v]
             newTable(i) = new HashEntry[k,v]()
         end
         this.table = newTable
-    end
-
-    def resizeIfNeeded() : unit
-        if (this.tableSize - this.filledEntries < this.tableSize/4) then
-            this.rehash()
-        end
     end
 
     def generateHash(key:k) : uint
@@ -174,23 +195,27 @@ active class Worker[k,v]
       END
     end
 
+    def getInfo() : unit
+        println("w: {} has: {}/{}", this.id, this.filledEntries, this.tableSize)
+    end
+
     ----- MapReduce functions ------
     def mapper[k2,v2](m:(k,v)->[(k2,v2)],r:(k2,[v2]) -> (k2,v2),bighash:Bighash[k2,v2]) : unit
+        var combiner = new Combiner[k2,v2](500) --fix this constant or make combiner resizeible
+        var result = bighash.copy()
+
         repeat i <- this.tableSize do
             if this.table(i).notEmpty() then
                 var mapresult = this.table(i).map[k2,v2](m)
-                var combiner = new Combiner[k2,v2](|mapresult|)
 
                 for pair <- mapresult do
                     var hashfunction = bighash.hashFunction()
                     var hash = hashfunction(pair.0)
                     combiner.extend(pair.0,pair.1,hash)
                 end
-
-                var result = bighash.copy()
-                combiner.combine(r,consume result)
             end
         end
+        combiner.combine(r,consume result)
     end
 
     def reducer(r:(k,[v]) -> (k,v),bighash:Bighash[k,v]) : unit

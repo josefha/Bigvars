@@ -17,8 +17,8 @@ linear class Supervisor[sharable k,sharable v]
 
     def init(f:k -> uint) : unit
         this.hashFunction = f
-        this.workerSize = 32
-        this.numOfWorkers = 16
+        this.workerSize = 16
+        this.numOfWorkers = 128--100
         this.tableSize = this.workerSize*this.numOfWorkers
         this.siphash = new Siphash()
         this.workers = new[Worker[k,v]](this.numOfWorkers)
@@ -181,6 +181,12 @@ linear class Supervisor[sharable k,sharable v]
             end
         end
         result
+    end
+
+    def getInfo() : unit
+        for worker <- this.workers do
+            worker ! getInfo()
+        end
     end
 
     ---------------- MapReduce functions -----------------

@@ -3,12 +3,12 @@
 ## Todo:
 * Real tests
 * Adding all steps in MapReduce [x]
-* correct rehashing - only in workers?
+* correct rehashing/resizing - only in workers?
 * more supervisors?
+* fix bighash function (remove() and elemets())
 * correct types in mapper/reducer in bighash [x]
 
 ### Notes:
-   * .to_lower()
    * Mining of massive datasets: book.
    * Language framework Spark.
 
