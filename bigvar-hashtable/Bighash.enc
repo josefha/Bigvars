@@ -13,8 +13,7 @@ linear class Bighash[k,v]
     end
 
     def copy() : Bighash[k,v]
-        var f = this.f
-        var bighash = new Bighash[k,v](fun(key:k) => f(key))
+        var bighash = new Bighash[k,v](this.f)
         bighash.supervisor = this.supervisor.copy()
         consume bighash
     end
@@ -31,7 +30,7 @@ linear class Bighash[k,v]
         this.supervisor.get(key)
     end
 
-    -- not working
+    -- needs fixing
     def remove(key:k) : unit
         get(this.supervisor.remove(key))
     end
@@ -66,6 +65,10 @@ linear class Bighash[k,v]
 
     def contains(value:v) : bool
         this.supervisor.contains(value)
+    end
+
+    def changeNodeDistribution(num: int,size:int) : unit
+        this.changeNodeDistribution(num,size)
     end
 
     def getInfo() : unit

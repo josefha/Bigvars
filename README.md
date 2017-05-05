@@ -1,11 +1,12 @@
 # Bigvars in Encore
 
 ## Todo:
-* Real tests
+* Real tests [ ]
+* toString()
+* SetNodeNumber()
+* fix bighash function (remove() and elemets()) [ ]
 * Adding all steps in MapReduce [x]
-* correct rehashing/resizing - only in workers?
-* more supervisors?
-* fix bighash function (remove() and elemets())
+* correct rehashing/resizing [x]
 * correct types in mapper/reducer in bighash [x]
 
 ### Notes:

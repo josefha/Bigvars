@@ -7,7 +7,6 @@ import ExampleText
 
 active class Main
     def main() : unit
-        -- randomText()
         var input = randomText().split("\n")
         var data = new Bighash[int,String](fun(k:int) => intID(k))
 
@@ -15,20 +14,14 @@ active class Main
             data.put(i,input(i))
         end
 
-        -----------------------------------------------------
         var mapReduce = new MapReduce[int,String,String,int](fun(k:String) => stringID_NEW(k))
+        -- mapReduce.setMapNodes(32,128)
+        -- mapReduce.setReduceNodes(8,64)
         var mapf = fun(key:int,value:String) => map(key,value)
         var reducef = fun(key:String,values:[int]) => reduce(key,values)
+
         var result = mapReduce.run(consume data, mapf, reducef)
-        -----------------------------------------------------
-
-        var keys = result.keys()
-        for key <- keys do
-            var value = result.getValues(key)
-            println("{}  [{}]",key,value(0))
-        end
-
-        result.getInfo()
+        printHash(consume result)
     end
 end
 
@@ -48,4 +41,12 @@ fun reduce(key:String,values:[int]) : (String,int)
         sum += value
     end
     (key,sum)
+end
+
+fun printHash(result:Bighash[String,int]): unit
+    var keys = result.keys()
+    for key <- keys do
+        var value = result.getValues(key)
+        println("{}  [{}]",key,value(0))
+    end
 end

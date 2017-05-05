@@ -11,34 +11,30 @@ linear class Supervisor[sharable k,sharable v]
     var numOfWorkers: int
     var workers : [(Worker[k,v])]
     var workerSize : int
-    var tableSize : int
     var siphash: Siphash
     var hashFunction : k -> uint
 
     def init(f:k -> uint) : unit
         this.hashFunction = f
         this.workerSize = 16
-        this.numOfWorkers = 128--100
-        this.tableSize = this.workerSize*this.numOfWorkers
+        this.numOfWorkers = 128
         this.siphash = new Siphash()
         this.workers = new[Worker[k,v]](this.numOfWorkers)
         this.initTable()
-    end
-
-    def copy() : Supervisor[k,v]
-        var f = this.hashFunction
-        var supr = new Supervisor[k,v](fun(key:k) => f(key))
-        supr.workers = this.workers
-        supr.tableSize = this.tableSize
-        supr.workerSize = this.workerSize
-        supr.numOfWorkers = this.numOfWorkers
-        consume supr
     end
 
     def initTable() : unit
         repeat i <- this.numOfWorkers do
             this.workers(i) = new Worker[k,v](this.workerSize,i,this.hashFunction)
         end
+    end
+
+    def copy() : Supervisor[k,v]
+        var supr = new Supervisor[k,v](this.hashFunction)
+        supr.workers = this.workers
+        supr.workerSize = this.workerSize
+        supr.numOfWorkers = this.numOfWorkers
+        consume supr
     end
 
     def put(key:k,value:v) : unit
@@ -134,16 +130,6 @@ linear class Supervisor[sharable k,sharable v]
         end
     end
 
-    def doubleSize() : unit
-        this.workerSize = this.workerSize*2
-        this.tableSize = this.workerSize*this.numOfWorkers
-
-        for worker <- this.workers do
-            worker ! doubleSize()
-        end
-
-    end
-
     def generateHash(key:k) : uint
         this.siphash.hash(this.hashFunction(key))
     end
@@ -183,9 +169,21 @@ linear class Supervisor[sharable k,sharable v]
         result
     end
 
+    def changeNodeDistribution(num: int,size:int) : unit
+        this.numOfWorkers = num
+        this.workerSize = size
+        this.workers = new[Worker[k,v]](num)
+        this.initTable()
+    end
+
     def getInfo() : unit
-        for worker <- this.workers do
-            worker ! getInfo()
+        var futs = new[Fut[unit]](this.numOfWorkers)
+        repeat i <- |this.workers| do
+            futs(i) = this.workers(i) ! getInfo()
+        end
+
+        repeat i <- this.numOfWorkers do
+            get(futs(i))
         end
     end
 

@@ -2,10 +2,9 @@
 module Workerh
 
 import HashEntry
-import Siphash
+import Combiner
 
 import Bighash -- for mapper and reducer
-import Combiner
 
 
 active class Worker[k,v]
@@ -13,7 +12,6 @@ active class Worker[k,v]
     var tableSize : int
     var filledEntries: int
     var table : [HashEntry[k,v]]
-    var siphash : Siphash
     var hashFunction : k -> uint
 
     def init(size: int, id:int, f:k -> uint) : unit
@@ -21,7 +19,6 @@ active class Worker[k,v]
         this.filledEntries = 0
         this.tableSize = size
         this.id = id
-        this.siphash = new Siphash()
         this.initTable()
     end
 
@@ -180,10 +177,6 @@ active class Worker[k,v]
             newTable(i) = new HashEntry[k,v]()
         end
         this.table = newTable
-    end
-
-    def generateHash(key:k) : uint
-        this.siphash.hash(this.hashFunction(key))
     end
 
     def modulo(value : uint, mod : uint) : uint
