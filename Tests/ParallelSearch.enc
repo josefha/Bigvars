@@ -8,7 +8,7 @@ active class Main
         println("Parallel Search")
         var input = GenerateAdjacencyList(simpleGraph())
         printGraph(consume input)
-        
+
         var mapReduce = new MapReduce[int,int,int,int](fun(k:int) => intID(k))
         -- var mapf = fun(key:int,value:String) => map(key,value)
         -- var reducef = fun(key:String,values:[int]) => reduce(key,values)

@@ -7,14 +7,19 @@ fun intID(key : int) : uint
     EMBED (uint) (uint64_t) #{key}; END
 end
 
-fun GenerateAdjacencyList(input:String) : Bighash[int,int]
-    var result = new Bighash[int,int](fun(k:int) => intID(k))
+fun NodeID(key: (int,int,int)) : uint
+    var value = key.0
+    EMBED (uint) (uint64_t) #{value}; END
+end
+
+fun GenerateAdjacencyList(input:String) : Bighash[(int,int,int),int]
+    var result = new Bighash[(int,int,int),int](fun(k:(int,int,int)) => NodeID(k))
     for pair <- input.split("\n") do
         var values = pair.split(",")
         var key = trimKeyToInt(values(0))
         var value = trimValueToInt(values(1))
-        result.extend(key, value)
-        result.extend(value, key)
+        result.extend((key,125,0), value)
+        result.extend((value,125,0), key)
     end
     consume result
 end
@@ -43,15 +48,16 @@ fun trimValueToInt(str:String) : int
     end
 end
 
-fun printGraph(graph: Bighash[int,int]) : unit
+fun printGraph(graph: Bighash[(int,int,int),int]) : unit
     var keys = graph.keys()
     for key <- keys do
-        print("\n {}: ",key)
+        print("\n Node: {} dist: {} Adj[",key.0,key.1)
         for value <- graph.getValues(key) do
             print(" {} ",value)
         end
+        print("]")
     end
-    println("")
+    println("]")
 end
 
 -- java GraphGen 20 3
