@@ -15,8 +15,6 @@ active class Main
         end
 
         var mapReduce = new MapReduce[int,String,String,int](fun(k:String) => stringID_NEW(k))
-        -- mapReduce.setMapNodes(32,128)
-        -- mapReduce.setReduceNodes(8,64)
         var mapf = fun(key:int,value:String) => map(key,value)
         var reducef = fun(key:String,values:[int]) => reduce(key,values)
 

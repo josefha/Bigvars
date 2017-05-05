@@ -1,0 +1,32 @@
+import MapReduce
+import Bighash
+import Siphash
+import GeneratedGraphs
+
+active class Main
+    def main() : unit
+        println("Parallel Search")
+        var input = GenerateAdjacencyList(simpleGraph())
+        printGraph(consume input)
+        
+        var mapReduce = new MapReduce[int,int,int,int](fun(k:int) => intID(k))
+        -- var mapf = fun(key:int,value:String) => map(key,value)
+        -- var reducef = fun(key:String,values:[int]) => reduce(key,values)
+        --
+        -- var result = mapReduce.run(consume data, mapf, reducef)
+        -- printHash(consume result)
+        ()
+    end
+
+    def interate() : unit
+        ()
+    end
+end
+
+fun map(key:int,value:String) : unit
+    ()
+end
+
+fun reduce(key:String,values:[int]) : unit
+    ()
+end

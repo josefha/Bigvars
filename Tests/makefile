@@ -1,11 +1,8 @@
-maptest:
-	encorec -I ../bigvar-array/ -I ../map-reduce/ -I ../bigvar-hashtable/ --run mapReduceTest.enc
+search-run:
+	encorec -I ../bigvar-array/ -I ../map-reduce/ -I ../bigvar-hashtable/ --run ParallelSearch.enc
 
-compile:
+Wordcount-run:
+	encorec -I ../bigvar-array/ -I ../map-reduce/ -I ../bigvar-hashtable/ --run WordCount.enc
+
+Wordcount-compile:
 	encorec -I ../bigvar-array/ -I ../map-reduce/ -I ../bigvar-hashtable/ -o program mapReduceTest.enc
-
-main:
-	encorec -I ../bigvar-array/ -I ../map-reduce/ -I ../bigvar-hashtable/ --run main.enc
-
-mapc:
-	encorec -I ../bigvar-array/ -I ../map-reduce/ -I ../bigvar-hashtable/ -c mapReduceTest.enc
