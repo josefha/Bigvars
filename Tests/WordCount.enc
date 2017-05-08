@@ -14,7 +14,7 @@ active class Main
             data.put(i,input(i))
         end
 
-        var mapReduce = new MapReduce[int,String,String,int](fun(k:String) => stringID_NEW(k))
+        var mapReduce = new MapReduce[int,String,String,int,int](fun(k:String) => stringID_NEW(k))
         var mapf = fun(key:int,value:String) => map(key,value)
         var reducef = fun(key:String,values:[int]) => reduce(key,values)
 

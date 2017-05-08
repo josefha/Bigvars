@@ -3,25 +3,79 @@ module GeneratedGraphs
 
 import Bighash
 
-fun intID(key : int) : uint
-    EMBED (uint) (uint64_t) #{key}; END
+local class Node
+    val id : int
+    var distance : int
+    var color: int -- 0 black -- (1 gray) -- (2 -- white)
+    var adjList : [Node]
+    var isNode : bool
+    def init(id:int) : unit
+        this.id = id
+        this.distance = 1000000
+        this.color = 2
+        this.isNode = false
+    end
+
+    def setAdjList(list:[Node]) : unit
+        this.isNode = true
+        this.adjList = list
+    end
+
+    def isNode() : bool
+        this.isNode
+    end
 end
 
-fun NodeID(key: (int,int,int)) : uint
-    var value = key.0
-    EMBED (uint) (uint64_t) #{value}; END
+fun nodeID(node:int) : uint
+    --var id = node.id
+    EMBED (uint) (uint64_t) #{node}; END
 end
 
-fun GenerateAdjacencyList(input:String) : Bighash[(int,int,int),int]
-    var result = new Bighash[(int,int,int),int](fun(k:(int,int,int)) => NodeID(k))
+fun nodeNodeID(node:Node) : uint
+    var id = node.id
+    EMBED (uint) (uint64_t) #{id}; END
+end
+
+fun GenerateAdjacencyList(input:String) : Bighash[int,Node]
+    var sorted = new Bighash[Node,Node](fun(k:Node) => nodeNodeID(k))
     for pair <- input.split("\n") do
         var values = pair.split(",")
         var key = trimKeyToInt(values(0))
         var value = trimValueToInt(values(1))
-        result.extend((key,125,0), value)
-        result.extend((value,125,0), key)
+        sorted.extend(new Node(key), new Node(value))
+        sorted.extend(new Node(value), new Node(key))
     end
+
+    var result = new Bighash[int,Node](fun(k:int) => nodeID(k))
+    var keys = sorted.keys()
+
+    for key <- keys do
+        var values = sorted.getValues(key)
+        var adjList = new[Node](|values|)
+        repeat i <- |values| do
+            adjList(i) = values(i)
+        end
+
+        var node = new Node(key.id)
+        node.setAdjList(adjList)
+
+        result.put(key.id,node)
+    end
+
     consume result
+end
+
+fun printGraph(graph: Bighash[int,Node]) : unit
+    var keys = graph.keys()
+    for key <- keys do
+        var node = graph.get(key)
+        print("\n Node: {} dist: {}  [",key,node.distance)
+        for value <- node.adjList do
+            print(" {} ",value.id)
+        end
+        print("]")
+    end
+    println("")
 end
 
 fun trimKeyToInt(str:String) : int
@@ -46,18 +100,6 @@ fun trimValueToInt(str:String) : int
         case Just(n) => n
         case _ => -1
     end
-end
-
-fun printGraph(graph: Bighash[(int,int,int),int]) : unit
-    var keys = graph.keys()
-    for key <- keys do
-        print("\n Node: {} dist: {} Adj[",key.0,key.1)
-        for value <- graph.getValues(key) do
-            print(" {} ",value)
-        end
-        print("]")
-    end
-    println("]")
 end
 
 -- java GraphGen 20 3

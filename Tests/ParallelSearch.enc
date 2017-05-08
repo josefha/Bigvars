@@ -1,20 +1,24 @@
+
+
 import MapReduce
-import Bighash
-import Siphash
 import GeneratedGraphs
+import Bighash
 
 active class Main
     def main() : unit
-        println("Parallel Search")
+        println("\n Parallel Search")
         var input = GenerateAdjacencyList(simpleGraph())
-        printGraph(consume input)
+        --printGraph(consume input)
 
-        var mapReduce = new MapReduce[int,int,int,int](fun(k:int) => intID(k))
-        -- var mapf = fun(key:int,value:String) => map(key,value)
-        -- var reducef = fun(key:String,values:[int]) => reduce(key,values)
+        var mapReduce = new MapReduce[int,Node,int,Node](fun(k:int) => nodeID(k))
+        var mapf = fun(key:int,value:Node) => map(key,value)
+        var reducef = fun(key:int,values:[Node]) => reduce(key,values)
+        -- --
+        -- var result = mapReduce.run(consume input, mapf, reducef)
         --
-        -- var result = mapReduce.run(consume data, mapf, reducef)
-        -- printHash(consume result)
+        -- for key <- result.keys() do
+        --     println("id:{}  dist: {}", key.id, key.distence)
+        -- end
         ()
     end
 
@@ -23,10 +27,34 @@ active class Main
     end
 end
 
-fun map(key:int,value:String) : unit
-    ()
+fun map(key:int,value:Node) : [(int, Node)]
+    value.color = 0
+    var adjList = value.adjList
+    val d = value.distance
+
+    var result = new[(int,Node)](|adjList|+1)
+    repeat i <- |adjList| do
+        var dist = new Node(-1) -- Distance Node
+        dist.distance = d+1
+        result(i) = (adjList(i).id,dist)
+    end
+    result(|adjList|) = (key,value)
+    result
 end
 
-fun reduce(key:String,values:[int]) : unit
-    ()
+fun reduce(key:int, values:[Node]) : (int, Node)
+    var dmin = 1000000
+    var node = new Node(-1)
+
+    for d <- values do
+        if d.id > 0 then
+            node = d
+        else
+            if d.distance < dmin then
+                dmin = d.distance
+            end
+        end
+    end
+    node.distance = dmin
+    (key,node)
 end
