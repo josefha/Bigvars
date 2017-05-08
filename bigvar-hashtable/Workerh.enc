@@ -6,7 +6,6 @@ import Combiner
 
 import Bighash -- for mapper and reducer
 
-
 active class Worker[k,v]
     var id : int
     var tableSize : int
@@ -193,24 +192,6 @@ active class Worker[k,v]
     end
 
     ----- MapReduce functions ------
-    -- def mapper[k2,v2](m:(k,v)->[(k2,v2)],r:(k2,[v2]) -> (k2,v2),bighash:Bighash[k2,v2]) : unit
-    --     var combiner = new Combiner[k2,v2](5000) --fix this constant or make combiner resizeible
-    --     var result = bighash.copy()
-    --
-    --     repeat i <- this.tableSize do
-    --         if this.table(i).notEmpty() then
-    --             var mapresult = this.table(i).map[k2,v2](m)
-    --
-    --             for pair <- mapresult do
-    --                 var hashfunction = bighash.hashFunction()
-    --                 var hash = hashfunction(pair.0)
-    --                 combiner.extend(pair.0,pair.1,hash)
-    --             end
-    --         end
-    --     end
-    --     combiner.combine(r,consume result)
-    -- end
-
     def mapper[k2,v2](m:(k,v)->[(k2,v2)],r:(k2,[v2]) -> (k2,v2),bighash:Bighash[k2,v2]) : unit
         var result = bighash.copy()
         var combinerSize = result.getSizing().1 * 2

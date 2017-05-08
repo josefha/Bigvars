@@ -1,10 +1,12 @@
 # Bigvars in Encore
 
 ## Todo:
-* Real tests [ ]
-* toString()
-* SetNodeNumber()
-* fix bighash function (remove() and elemets()) [ ]
+* Optimize Clear() to clear HashEntry instead of creating new ones [ ]
+* add so user can change node number in mapReduce [ ]
+* Create real tests [ ]
+* toString() [ ]
+* fix Bighash methods remove and elemets [ ]
+* Create MapReduce program Parallel search [x]
 * Adding all steps in MapReduce [x]
 * correct rehashing/resizing [x]
 * correct types in mapper/reducer in bighash [x]
