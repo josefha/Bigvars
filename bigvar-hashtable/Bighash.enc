@@ -75,6 +75,10 @@ linear class Bighash[k,v]
         this.supervisor.getInfo()
     end
 
+    def getSizing() : (int,int)
+        this.supervisor.getSizing()
+    end
+
     ---------------- MapReduce functions -----------------
 
     def extend(key:k, value:v) : unit

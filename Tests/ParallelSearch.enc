@@ -20,7 +20,7 @@ active class Main
         this.mapf = fun(key:int,value:Node) => map(key,value)
         this.reducef = fun(key:int,values:[Node]) => reduce(key,values)
 
-        var result = this.iterate(12,consume input)
+        var result = this.iterate(10,consume input)
         printResult(consume result)
         ()
     end
@@ -30,9 +30,10 @@ active class Main
         repeat i <- max do
             println("Iteration {}", i)
             var done = true
+            -- iterate all nodes and if some node is undone break this loop and mp.run()
             for key <- result.keys() do
                 var value = result.get(key)
-                if value.distance > max then
+                if value.color > 0 then
                     done = false
                     break
                 end
@@ -57,6 +58,8 @@ active class Main
     end
 end
 
+-- if node is gray -> for n in ajdList: create gray dist node with (d+1) + emit(oldnode.black)
+-- if black or white -> emit(node)
 fun map(key:int,value:Node) : [(int, Node)]
     if value.color == 1 then
         value.color = 0
@@ -77,13 +80,12 @@ fun map(key:int,value:Node) : [(int, Node)]
     end
 end
 
+-- emit node with, adjList, darkest color and the minimum distance
 fun reduce(key:int, values:[Node]) : (int, Node)
     var dmin = 100
     var node = new Node(-1)
     var color = 2
-    --print("\n key in reduce {}",key)
     for d <- values do
-        --print(" ({})",d.id)
         if d.id >= 0 then
             node = d
         else

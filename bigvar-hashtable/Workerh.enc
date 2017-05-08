@@ -212,8 +212,9 @@ active class Worker[k,v]
     -- end
 
     def mapper[k2,v2](m:(k,v)->[(k2,v2)],r:(k2,[v2]) -> (k2,v2),bighash:Bighash[k2,v2]) : unit
-        var combiner = new Combiner[k2,v2](5000) --fix this constant or make combiner resizeible
         var result = bighash.copy()
+        var combinerSize = result.getSizing().1 * 2
+        var combiner = new Combiner[k2,v2](combinerSize,consume result,r)
 
         repeat i <- this.tableSize do
             if this.table(i).notEmpty() then
@@ -226,7 +227,7 @@ active class Worker[k,v]
                 end
             end
         end
-        combiner.combine(r,consume result)
+        combiner.combine()
     end
 
     def reducer(r:(k,[v]) -> (k,v),bighash:Bighash[k,v]) : unit

@@ -7,34 +7,48 @@ import Bighash
 local class Combiner[sharable k,sharable v]
     var tableSize : int
     var table : [HashEntry[k,v]]
+    var filledEntries : int
+    var output : Bighash[k,v]
+    var r : (k,[v]) -> (k,v)
 
-    def init(size: int) : unit
+    def init(size: int, output:Bighash[k,v], r:(k,[v]) -> (k,v)) : unit
+        var outputc = output.copy()
         this.tableSize = size
         this.table = new[HashEntry[k,v]](size)
+        this.output = consume outputc
+        this.r = r
+
         repeat i <- this.tableSize do
             this.table(i) = new HashEntry[k,v]()
         end
     end
 
-    def combine(reduce:(k,[v]) -> (k,v), bighash:Bighash[k,v]) : unit
+    def combine() : unit
         repeat i <- this.tableSize do
             var entry = this.table(i)
             if entry.notEmpty() then
                 var key = entry.getKey()
                 if (entry.size() == 1) then
                     var value = entry.getValue()
-                    bighash.extend(key,value)
+                    this.output.extend(key,value)
                 else
                     var values = entry.getValues()
-                    var pair = reduce(key,values)
-                    bighash.extend(key,pair.1)
+                    var pair = this.r(key,values)
+                    this.output.extend(key,pair.1)
                 end
             end
         end
     end
 
     def extend(key:k,value:v,hashValue:uint) : unit
+        if (this.tableSize - this.filledEntries < this.tableSize/4) then
+            println("combiner full")
+            this.combine()
+            this.clear()
+        end
+
         var hashentry = this.getEntry(hashValue)
+        if (hashentry.hasEntry == false) then this.filledEntries += 1 end
         hashentry.extend(key,value,hashValue)
     end
 
@@ -46,6 +60,15 @@ local class Combiner[sharable k,sharable v]
             hashentry = this.table(entryID)
         end
         hashentry
+    end
+
+    def clear() : unit
+        var newTable = new [HashEntry[k,v]](this.tableSize)
+        repeat i <- this.tableSize do
+            newTable(i) = new HashEntry[k,v]()
+        end
+        this.filledEntries = 0
+        this.table = newTable
     end
 
     def modulo(value : uint, mod : uint) : uint
