@@ -1,5 +1,8 @@
 bigvar
 /Test/main
+/Test/result.txt
+/Test/program
+/Test/shortestpath
 /Graph-Generators/GraphGen.class
 .DS_Store
 .#*

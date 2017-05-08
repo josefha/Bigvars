@@ -5,56 +5,95 @@ import GeneratedGraphs
 import Bighash
 
 active class Main
+
+    var mp : MapReduce[int,Node,int,Node]
+    var mapf : (int,Node) -> [(int, Node)]
+    var reducef : (int, [Node]) -> (int, Node)
+
     def main() : unit
         println("\n Parallel Search")
-        var input = GenerateAdjacencyList(simpleGraph())
-        --printGraph(consume input)
+        var input = GenerateAdjacencyList(g2000_5())--g500()) --graph10000())
+        input = this.setStartNode(7,consume input)
+        --input = printGraph(consume input)
 
-        var mapReduce = new MapReduce[int,Node,int,Node](fun(k:int) => nodeID(k))
-        var mapf = fun(key:int,value:Node) => map(key,value)
-        var reducef = fun(key:int,values:[Node]) => reduce(key,values)
-        -- --
-        -- var result = mapReduce.run(consume input, mapf, reducef)
-        --
-        -- for key <- result.keys() do
-        --     println("id:{}  dist: {}", key.id, key.distence)
-        -- end
+        this.mp = new MapReduce[int,Node,int,Node](fun(k:int) => nodeID(k))
+        this.mapf = fun(key:int,value:Node) => map(key,value)
+        this.reducef = fun(key:int,values:[Node]) => reduce(key,values)
+
+        var result = this.iterate(12,consume input)
+        printResult(consume result)
         ()
     end
 
-    def interate() : unit
-        ()
+    def iterate(max:int, input:Bighash[int,Node]) : Bighash[int,Node]
+        var result = input.copy()
+        repeat i <- max do
+            println("Iteration {}", i)
+            var done = true
+            for key <- result.keys() do
+                var value = result.get(key)
+                if value.distance > max then
+                    done = false
+                    break
+                end
+            end
+
+            if done then
+                break
+            else
+                result = this.mp.run(consume result, this.mapf, this.reducef)
+            end
+        end
+        consume result
+    end
+
+    def setStartNode(id:int, input:Bighash[int,Node]) : Bighash[int,Node]
+        var output = input.copy()
+        var startnode = input.get(id)
+        startnode.distance = 0
+        startnode.color = 1
+        output.put(id,startnode)
+        consume output
     end
 end
 
 fun map(key:int,value:Node) : [(int, Node)]
-    value.color = 0
-    var adjList = value.adjList
-    val d = value.distance
-
-    var result = new[(int,Node)](|adjList|+1)
-    repeat i <- |adjList| do
-        var dist = new Node(-1) -- Distance Node
-        dist.distance = d+1
-        result(i) = (adjList(i).id,dist)
+    if value.color == 1 then
+        value.color = 0
+        var adjList = value.adjList
+        var result = new[(int,Node)](|adjList|+1)
+        val d = value.distance
+        repeat i <- |adjList| do
+            var dist = new Node(-1) -- Distance Node
+            dist.distance = d+1
+            dist.color = 1
+            var id = adjList(i).id
+            result(i) = (id,dist)
+        end
+        result(|adjList|) = (key,value)
+        result
+    else
+        [(key,value)]
     end
-    result(|adjList|) = (key,value)
-    result
 end
 
 fun reduce(key:int, values:[Node]) : (int, Node)
-    var dmin = 1000000
+    var dmin = 100
     var node = new Node(-1)
-
+    var color = 2
+    --print("\n key in reduce {}",key)
     for d <- values do
-        if d.id > 0 then
+        --print(" ({})",d.id)
+        if d.id >= 0 then
             node = d
         else
             if d.distance < dmin then
                 dmin = d.distance
             end
         end
+        if d.color < color then color = d.color end
     end
-    node.distance = dmin
+    if node.distance > dmin then node.distance = dmin end
+    node.color = color
     (key,node)
 end
