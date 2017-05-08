@@ -12,7 +12,8 @@ active class Main
 
     def main() : unit
         println("\n Parallel Search")
-        var input = GenerateAdjacencyList(g2000_5())--g500()) --graph10000())
+        --var input = GenerateAdjacencyList(g5000_3()) -- Working with 128,128
+        var input = GenerateAdjacencyList(g2000_5()) --g500())
         input = this.setStartNode(7,consume input)
         --input = printGraph(consume input)
 
@@ -22,6 +23,7 @@ active class Main
 
         var result = this.iterate(10,consume input)
         printResult(consume result)
+        println("\n DONE")
         ()
     end
 

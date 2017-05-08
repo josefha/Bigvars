@@ -42,7 +42,7 @@ local class Combiner[sharable k,sharable v]
 
     def extend(key:k,value:v,hashValue:uint) : unit
         if (this.tableSize - this.filledEntries < this.tableSize/4) then
-            println("combiner full")
+            println("new combiner")
             this.combine()
             this.clear()
         end

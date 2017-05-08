@@ -140,8 +140,8 @@ active class Worker[k,v]
         this.table = this.newTable()
 
         repeat i <- |oldTable| do
-            if this.table(i).notEmpty() then
-                var oldEntry = this.table(i)
+            if oldTable(i).notEmpty() then
+                var oldEntry = oldTable(i)
                 this.replace(oldEntry)
             end
         end
@@ -168,16 +168,6 @@ active class Worker[k,v]
         newTable
     end
 
-    def doubleSize() : unit
-        this.filledEntries = 0
-        this.tableSize = this.tableSize*2
-        var newTable = new [HashEntry[k,v]](this.tableSize)
-        repeat i <- this.tableSize do
-            newTable(i) = new HashEntry[k,v]()
-        end
-        this.table = newTable
-    end
-
     def modulo(value : uint, mod : uint) : uint
       EMBED (uint)
         uint64_t value = (uint64_t) #{value};
@@ -200,7 +190,6 @@ active class Worker[k,v]
         repeat i <- this.tableSize do
             if this.table(i).notEmpty() then
                 var mapresult = this.table(i).map[k2,v2](m)
-
                 for pair <- mapresult do
                     var hashfunction = bighash.hashFunction()
                     var hash = hashfunction(pair.0)
@@ -222,7 +211,7 @@ active class Worker[k,v]
         end
     end
 
-    def mapperNoCombiner[k2,v2](m:(k,v)->[(k2,v2)], bighash:Bighash[k2,v2]) : unit
+    def mapperNoCombiner[k2,v2](m:(k,v)->[(k2,v2)],r:(k2,[v2]) -> (k2,v2), bighash:Bighash[k2,v2]) : unit
         repeat i <- this.tableSize do
             if this.table(i).notEmpty() then
                 for result <- this.table(i).map[k2,v2](m) do

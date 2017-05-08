@@ -16,7 +16,7 @@ linear class Supervisor[sharable k,sharable v]
 
     def init(f:k -> uint) : unit
         this.hashFunction = f
-        this.workerSize = 128
+        this.workerSize = 32
         this.numOfWorkers = 128
         this.siphash = new Siphash()
         this.workers = new[Worker[k,v]](this.numOfWorkers)
