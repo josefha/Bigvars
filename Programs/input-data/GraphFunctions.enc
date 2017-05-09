@@ -8,14 +8,11 @@ local class Node
     var distance : int
     var color: int
     var adjList : [Node]
+
     def init(id:int) : unit
         this.id = id
         this.distance = 100
         this.color = 2
-    end
-
-    def setAdjList(list:[Node]) : unit
-        this.adjList = list
     end
 end
 
@@ -58,7 +55,7 @@ fun generateNodes(input:String) : Bighash[int,Node]
         end
 
         var node = new Node(key.id)
-        node.setAdjList(adjList)
+        node.adjList = adjList
 
         result.put(key.id,node)
     end

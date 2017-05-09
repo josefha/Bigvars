@@ -45,10 +45,10 @@ fun map(key:int,value:Node) : [(int, Node)]
         var result = new[(int,Node)](|adjList|+1)
         val d = value.distance
         repeat i <- |adjList| do
+            var id = adjList(i).id
             var dist = new Node(-1) -- Distance Node
             dist.distance = d+1
             dist.color = 1
-            var id = adjList(i).id
             result(i) = (id,dist)
         end
         result(|adjList|) = (key,value)

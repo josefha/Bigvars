@@ -29,7 +29,6 @@ fun map(key:int,value:String) : [(String,int)]
     repeat i <- |words| do
         result(i) = (words(i),1)
     end
-
     result
 end
 
