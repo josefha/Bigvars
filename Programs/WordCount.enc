@@ -8,18 +8,18 @@ import ExampleText
 active class Main
     def main() : unit
         var input = randomText().split("\n")
-        var data = new Bighash[int,String](fun(k:int) => intID(k))
+        var graph = new Bighash[int,String](fun(k:int) => intID(k))
 
         repeat i <- |input| do
-            data.put(i,input(i))
+            graph.put(i,input(i))
         end
 
         var mapReduce = new MapReduce[int,String,String,int](fun(k:String) => stringID_NEW(k))
         var mapf = fun(key:int,value:String) => map(key,value)
         var reducef = fun(key:String,values:[int]) => reduce(key,values)
 
-        var result = mapReduce.run(consume data, mapf, reducef)
-        printHash(consume result)
+        var graph = mapReduce.run(consume graph, mapf, reducef)
+        printHash(consume graph)
     end
 end
 

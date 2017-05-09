@@ -1,70 +1,43 @@
 
-
 import MapReduce
-import GeneratedGraphs
 import Bighash
 
---import CTimer
+import GeneratedGraphs
+import GraphFunctions
 
 active class Main
-
     var mp : MapReduce[int,Node,int,Node]
     var mapf : (int,Node) -> [(int, Node)]
     var reducef : (int, [Node]) -> (int, Node)
 
     def main() : unit
         println("Running Parallel breadth-first shortest-path on 10 000 nodes")
-        var input = GenerateAdjacencyList(graph10000()) --g500()) -- g5000_3() --big50000_10()
-        input = this.setStartNode(7,consume input)
+        var graph = generateNodes(graph10000())
+        graph = setStartNode(7,consume graph)
 
         this.mp = new MapReduce[int,Node,int,Node](fun(k:int) => nodeID(k))
         this.mapf = fun(key:int,value:Node) => map(key,value)
         this.reducef = fun(key:int,values:[Node]) => reduce(key,values)
 
-        var result = this.iterate(25,consume input)
+        graph = this.iterate(25,consume graph)
 
-        --printResult(consume result)
-        --println("\n DONE")
-        ()
+        printResult(consume graph)
     end
 
-    def iterate(max:int, input:Bighash[int,Node]) : Bighash[int,Node]
-        var result = input.copy()
+    def iterate(max:int, graph:Bighash[int,Node]) : Bighash[int,Node]
+        var result = graph.copy()
         repeat i <- max do
-            --println("Iteration {}", i)
-            var done = true
-            -- iterate all nodes and if some node is undone break this loop and mp.run()
-            for key <- result.keys() do
-                var value = result.get(key)
-                if value.color > 0 then
-                    done = false
-                    break
-                end
-            end
-
-            if done then
-                break
-            else
+            var graphCopy = graph.copy()
+            if stillUnvisitedNodes(consume graphCopy) then
                 result = this.mp.run(consume result, this.mapf, this.reducef)
+            else
+                break
             end
         end
         consume result
     end
-
-    --def isDone()
-
-    def setStartNode(id:int, input:Bighash[int,Node]) : Bighash[int,Node]
-        var output = input.copy()
-        var startnode = input.get(id)
-        startnode.distance = 0
-        startnode.color = 1
-        output.put(id,startnode)
-        consume output
-    end
 end
 
--- if node is gray -> for n in ajdList: create gray dist node with (d+1) + emit(oldnode.black)
--- if black or white -> emit(node)
 fun map(key:int,value:Node) : [(int, Node)]
     if value.color == 1 then
         value.color = 0
@@ -85,7 +58,6 @@ fun map(key:int,value:Node) : [(int, Node)]
     end
 end
 
--- emit node with, adjList, darkest color and the minimum distance
 fun reduce(key:int, values:[Node]) : (int, Node)
     var dmin = 100
     var node = new Node(-1)

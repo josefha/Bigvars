@@ -1,109 +1,11 @@
-
 module GeneratedGraphs
 
-import Bighash
+-- Generated Graphs in Stringform, one edge on every line
 
-local class Node
-    val id : int
-    var distance : int
-    var color: int
-    var adjList : [Node]
-    var isNode : bool
-    def init(id:int) : unit
-        this.id = id
-        this.distance = 100
-        this.color = 2
-    end
-
-    def setAdjList(list:[Node]) : unit
-        this.adjList = list
-    end
-end
-
-fun nodeID(node:int) : uint
-    EMBED (uint) (uint64_t) #{node}; END
-end
-
-fun nodeNodeID(node:Node) : uint
-    var id = node.id
-    EMBED (uint) (uint64_t) #{id}; END
-end
-
-fun GenerateAdjacencyList(input:String) : Bighash[int,Node]
-    var sorted = new Bighash[Node,Node](fun(k:Node) => nodeNodeID(k))
-    for pair <- input.split("\n") do
-        var values = pair.split(",")
-        var key = trimKeyToInt(values(0))
-        var value = trimValueToInt(values(1))
-        sorted.extend(new Node(key), new Node(value))
-        sorted.extend(new Node(value), new Node(key))
-    end
-
-    var result = new Bighash[int,Node](fun(k:int) => nodeID(k))
-    var keys = sorted.keys()
-
-    for key <- keys do
-        var values = sorted.getValues(key)
-        var adjList = new[Node](|values|)
-        repeat i <- |values| do
-            adjList(i) = values(i)
-        end
-
-        var node = new Node(key.id)
-        node.setAdjList(adjList)
-
-        result.put(key.id,node)
-    end
-
-    consume result
-end
-
-fun printResult(graph: Bighash[int,Node]) : unit
-    var keys = graph.keys()
-    for key <- keys do
-        var node = graph.get(key)
-        print("\n {}  : {}",key, node.distance)
-    end
-end
-
-fun printGraph(graphin: Bighash[int,Node]) : Bighash[int,Node]
-    var graph = graphin.copy()
-    var keys = graph.keys()
-    for key <- keys do
-        var node = graph.get(key)
-        print("\n Node: {}   |{}|  C: {}          [" ,key,node.distance,node.color)
-        for value <- node.adjList do
-            print(" {} ",value.id)
-        end
-        print("]")
-    end
-    println("")
-    consume graph
-end
-
-fun trimKeyToInt(str:String) : int
-    var keystr = ""
-    match str.substring(1,str.length()) with
-        case Just(s) => keystr = s
-        case _ => keystr = ""
-    end
-    match keystr.to_int() with
-        case Just(n) => n
-        case _ => 0
-    end
-end
-
-fun trimValueToInt(str:String) : int
-    var keystr = ""
-    match str.substring(0,str.length()-1) with
-        case Just(s) => keystr = s
-        case _ => keystr = ""
-    end
-    match keystr.to_int() with
-        case Just(n) => n
-        case _ => -1
-    end
-end
+-- graph250()
+-- g2000_5()
+-- g5000_3()
+-- graph10000()
 
 fun g5000_3() : String
     "(0,1)
