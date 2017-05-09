@@ -1,0 +1,50 @@
+
+import MapReduce
+import Bighash
+import Siphash
+
+import ExampleText
+
+active class Main
+    def main() : unit
+        var input = randomText().split("\n")
+        var data = new Bighash[int,String](fun(k:int) => intID(k))
+
+        repeat i <- |input| do
+            data.put(i,input(i))
+        end
+
+        var mapReduce = new MapReduce[int,String,String,int](fun(k:String) => stringID_NEW(k))
+        var mapf = fun(key:int,value:String) => map(key,value)
+        var reducef = fun(key:String,values:[int]) => reduce(key,values)
+
+        var result = mapReduce.run(consume data, mapf, reducef)
+        printHash(consume result)
+    end
+end
+
+fun map(key:int,value:String) : [(String,int)]
+    var words = value.to_lower().split(" ")
+    var result = new[(String,int)](|words|)
+    repeat i <- |words| do
+        result(i) = (words(i),1)
+    end
+
+    result
+end
+
+fun reduce(key:String,values:[int]) : (String,int)
+    var sum = 0
+    for value <- values do
+        sum += value
+    end
+    (key,sum)
+end
+
+fun printHash(result:Bighash[String,int]): unit
+    var keys = result.keys()
+    for key <- keys do
+        var value = result.getValues(key)
+        println("{}  [{}]",key,value(0))
+    end
+end
