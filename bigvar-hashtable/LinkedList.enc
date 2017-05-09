@@ -6,7 +6,6 @@ module LinkedList
 
 import Data.Either
 import Collection
-import Iterable
 
 local class LinkedNode[t] : Id
   var value : t
