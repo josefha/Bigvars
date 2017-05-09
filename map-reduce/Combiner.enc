@@ -33,6 +33,7 @@ local class Combiner[sharable k,sharable v]
                     this.output.extend(key,value)
                 else
                     var values = entry.getValues()
+                    --println("combiner is combineing {}", |values|)
                     var pair = this.r(key,values)
                     this.output.extend(key,pair.1)
                 end
@@ -42,7 +43,6 @@ local class Combiner[sharable k,sharable v]
 
     def extend(key:k,value:v,hashValue:uint) : unit
         if (this.tableSize - this.filledEntries < this.tableSize/4) then
-            println("new combiner")
             this.combine()
             this.clear()
         end

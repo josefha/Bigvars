@@ -8,4 +8,4 @@ Wordcount-run:
 	encorec -I ../bigvar-array/ -I ../map-reduce/ -I ../bigvar-hashtable/ --run WordCount.enc
 
 Wordcount-compile:
-	encorec -I ../bigvar-array/ -I ../map-reduce/ -I ../bigvar-hashtable/ -o program mapReduceTest.enc
+	encorec -I ../bigvar-array/ -I ../map-reduce/ -I ../bigvar-hashtable/ -o wordcount WordCount.enc

@@ -6,7 +6,7 @@ import Bighash
 local class Node
     val id : int
     var distance : int
-    var color: int -- 0 black -- (1 gray) -- (2 -- white)
+    var color: int
     var adjList : [Node]
     var isNode : bool
     def init(id:int) : unit
@@ -21,7 +21,6 @@ local class Node
 end
 
 fun nodeID(node:int) : uint
-    --var id = node.id
     EMBED (uint) (uint64_t) #{node}; END
 end
 
