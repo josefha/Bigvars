@@ -4,7 +4,6 @@ module MapReduce
 import Bighash
 
 local class MapReduce[k1,v1,k2,v2]
-
     var hasher : k2 -> uint
     var mapNumOfNodes : int
     var mapNodeSize : int
@@ -34,16 +33,14 @@ local class MapReduce[k1,v1,k2,v2]
     def run(input:Bighash[k1,v1], m:(k1,v1)->[(k2,v2)], r:(k2,[v2]) -> (k2,v2)): Bighash[k2,v2]
         ------- Mapper -----------
         var map_result = new Bighash[k2,v2](this.hasher)
-        if (this.userMapSize) then map_result.changeNodeDistribution(this.mapNumOfNodes,this.mapNodeSize) end
+        --if (this.userMapSize) then map_result.changeNodeDistribution(this.mapNumOfNodes,this.mapNodeSize) end
         var map_result_c = map_result.copy()
         input.mapper[k2,v2](m,r,consume map_result_c)
-        --map_result.getInfo()
         ------- Reducer ----------
         var reduce_result = new Bighash[k2,v2](this.hasher)
-        if (this.userReduceSize) then reduce_result.changeNodeDistribution(this.reducenumOfNodes,this.reduceNodeSize) end
+        --if (this.userReduceSize) then reduce_result.changeNodeDistribution(this.reducenumOfNodes,this.reduceNodeSize) end
         var reduce_result_c = reduce_result.copy()
         map_result.reducer(r,consume reduce_result_c)
-        --reduce_result.getInfo()
         ------- Result -----------
         consume reduce_result
     end

@@ -81,6 +81,7 @@ fun printResult(graph: Bighash[int,Node]) : unit
         var node = graph.get(key)
         print("\n {}  : {}",key, node.distance)
     end
+    println("")
 end
 
 fun printGraph(graphin: Bighash[int,Node]) : Bighash[int,Node]

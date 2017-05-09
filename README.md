@@ -1,15 +1,20 @@
 # Bigvars in Encore
 
 ## Todo:
-* Optimize Clear() to clear HashEntry instead of creating new ones [ ]
-* add so user can change node number in mapReduce [ ]
-* Create real tests [ ]
-* toString() [ ]
-* fix Bighash methods remove and elemets [ ]
+* Optimize rehashing [ ]
+* support user Bighash settings [ ]
+* fix Bighash methods remove and elements [ ]
+* Real Test[ ]
+* Delete supervisor in Bighash? []
 * Create MapReduce program Parallel search [x]
+* Create Graph functions based on the generated data [x]
 * Adding all steps in MapReduce [x]
 * correct rehashing/resizing [x]
-* correct types in mapper/reducer in bighash [x]
+* correct types in mapper/reducer in Bighash [x]
+
+### MapReduce Programs
+* WordCount
+* ShortestPath (Parallel breadth-first)
 
 ### Notes:
    * Mining of massive datasets: book.
@@ -47,7 +52,3 @@
 * zerobigvar(size:int) : Bigvar[int]
 * onesbigvar(size:int) : Bigvar[int]
 * rangebigvar(l1:int, l2:int) : Bigvar[int]
-
-## functionality todo arrays
-* automate redistribution
-* different number of actors depending on size
