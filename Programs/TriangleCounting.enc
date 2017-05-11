@@ -1,0 +1,34 @@
+
+import MapReduce
+import Bighash
+
+import GeneratedGraphs
+import GraphFunctions
+
+active class Main
+    def main() : unit
+        println("Finding Triangels in Graphs")
+        var graph = generateNodes(graph10000())
+        graph = setStartNode(7,consume graph)
+
+        mp = new MapReduce[int,Node,int,Node](nodeID)
+        -- m1out = mp.run(consume graph, map1, reduce1)
+        -- result = mp.run(consume m1out, map2, reduce2)
+        --printResult(consume result)
+    end
+
+fun map1(key:(Node,Node),zero:int) : () --[(Node, Node)]
+    ()
+end
+
+fun reduce1(key:int, values:[Node]) : () --(Node, (Node,Node))
+    ()
+end
+
+fun map2(key:Node,value:(Node,Node)) : () --[(Node, Node)]
+    ()
+end
+
+fun reduce2(key:int, values:[Node]) : () --(Node, (Node,Node))
+    ()
+end

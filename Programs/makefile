@@ -3,11 +3,11 @@ Bighash = -I ../Bighash/
 MapReduce = -I ../MapReduce/
 InputData = -I input-data/
 
-Search-compile:
-	encorec $(MapReduce) $(Bighash) $(InputData) ShortestPath.enc -o shortestpath
+triangle:
+	encorec $(MapReduce) $(Bighash) $(InputData) TriangleCounting.enc -o triangle
 
-WordCount-run:
-	encorec $(MapReduce) $(Bighash) $(InputData) --run WordCount.enc
+search:
+	encorec $(MapReduce) $(Bighash) $(InputData) ShortestPath.enc -o shortestpath
 
 WordCount-compile:
 	encorec $(MapReduce) $(Bighash) $(InputData) -o wordcount WordCount.enc

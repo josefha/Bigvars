@@ -204,9 +204,7 @@ active class Worker[k,v]
         repeat i <- this.tableSize do
             if this.table(i).notEmpty() then
                 var result = this.table(i).reduce(r)
-                var key = result.0
-                var value = result.1
-                bighash.put(key,value)
+                bighash.put(result.0,result.1)
             end
         end
     end

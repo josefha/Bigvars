@@ -65,7 +65,6 @@ local class HashEntry[k,v]
         r(this.key,this.getValues())
     end
 
-
     def extend(key:k,value:v,hashValue:uint) : unit
         this.size += 1
         this.hashValue = hashValue
