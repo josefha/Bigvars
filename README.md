@@ -1,7 +1,7 @@
 # Bigvars in Encore
 
 ## Todo:
-* Optimize rehashing [ ]
+* Run Performance tests on Bighash with MapReduce (use Dtrace and flamegraph) []
 * support user Bighash settings [ ]
 * fix Bighash methods remove and elements [ ]
 * Real Test[ ]
