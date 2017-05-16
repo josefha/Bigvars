@@ -1,0 +1,93 @@
+\section{Performance Tests}
+When testing the implementation of Bigvars focus has been on Big-hashes (distributed hash tables). The structure different between the Big-hashes and the Big-Arrays (distributed arrays) is not enough to make important difference. If one shows good result the principle with distributed data types is credited and both becomes promising. Currently the Big-hash also have more implemented functionality. The implemented framework (See next section) to showcase Bigvar is implemented with Big-hashes but could have been written with Big-arrays as well.
+
+\section{MapReduce with Big-hash}
+
+\pagebreak
+\subsection{MapReduce Programs}
+With a correctly implemented MapReduce framework creating new programs should be easy. The user provide one map and one reduce function and prepare the input. The MapRecude framework provide some functionality that should help with the setup such as an Encore graph representation and hashing functions for different data types. A number of example program has been implemented to showcase what and how one could do use this Encore MapReduce framework.
+
+\subsubsection{Word Count}
+\begin{lstlisting}
+fun map(key:int,value:String) : [(String,int)]
+    var words = value.to_lower().split(" ")
+    var result = new[(String,int)](|words|)
+    repeat i <- |words| do
+        result(i) = (words(i),1)
+    end
+    result
+end
+\end{lstlisting}
+\begin{lstlisting}
+fun reduce(key:String,values:[int]) : (String,int)
+    var sum = 0
+    for value <- values do
+        sum += value
+    end
+    (key,sum)
+end
+\end{lstlisting}
+
+First the map and the reduce function is created. Then the user insert the input-data to a Big-hash object as well as create a new MapReduce object with the correct type definition. The four different types of the mapReduce objects k1,v1,k2,v2 can be extracted from the map and the reduce functions as seen bellow.
+
+\begin{lstlisting}
+map(k1,v2) -> [(k2,v2)]
+reduce(k2,v2) -> (k2,v2)
+\end{lstlisting}
+
+To run the MapRecude job the user then calls the run method on the MapReduce object with the input Big-hash, the map and the reduce function as parameters, stringID is a hashing function for the k2 type. Returned from the run method is a Big-Hash with the result stored k2,v2. In the Word Count program the result is the words mapped to how many times that word appears in the input text. 
+
+\begin{lstlisting}
+var mapReduce = new MapReduce[int,String,String,int](stringID)
+var graph = mapReduce.run(consume graph, map, reduce)
+\end{lstlisting}
+
+The result could be continue to worked with as it is distributed Big-hash object. Single values could be extracted with Big-hashes get(key) method or if all values is wanted the user could loop trough all the data with the keys method that returns all the keys of a Big-hash.\\
+
+\subsubsection{Shortest-path with Parallel Breadth-first Search}
+\begin{lstlisting}
+fun map(key:int,value:Node) : [(int, Node)]
+    if value.color == 1 then
+        value.color = 0
+        var adjList = value.adjList
+        var result = new[(int,Node)](|adjList|+1)
+        repeat i <- |adjList| do
+            var id = adjList(i).id
+            var dist = new Node(-1) -- Distance Node
+            dist.distance = value.distance + 1
+            dist.color = 1
+            result(i) = (id,dist)
+        end
+        result(|adjList|) = (key,value)
+        result
+    else
+        [(key,value)]
+    end
+end
+\end{lstlisting}
+\begin{lstlisting}
+fun reduce(key:int, values:[Node]) : (int, Node)
+    var dmin = 100
+    var node = new Node(-1)
+    var color = 2
+    for d <- values do
+        if d.id >= 0 then
+            node = d
+        else
+            if d.distance < dmin then
+                dmin = d.distance
+            end
+        end
+        if d.color < color then color = d.color end
+    end
+    if node.distance > dmin then node.distance = dmin end
+    node.color = color
+    (key,node)
+end
+\end{lstlisting}
+
+\section{Shortcomings}
+Distributed among many machines and many thousands computing nodes. \\
+time limit : not fully optimized \\
+Array missing some functionality
+

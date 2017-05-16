@@ -1,0 +1,24 @@
+\section{Requirements \& Features}
+The idea and requirements of what the Bigvar library is started with other implementations of distributed data types. The goal is to give the programmer an easy and efficient tool for creating parallel and concurrent programs, it should be easier not harder to work in the Bigvar environment then with normal data types such as arrays with big amounts of data. The features of the Bigvar environment includes not only abstraction of the parallelism and basic functionality from the normal data types, it have more advanced functionality like the implementation of the big data framework MapRecuce. \\
+
+The basic concepts of all data types in the Bigvar environments is that the data of the Bigvars is divided between many different processes. The library will provide an answer of how it could be divided and the user can then optimise the sizing if necessary. Facilitate to work with big amounts of data is also a requested features. 
+
+\section{Distributed Data Types}
+The distributed data types supported by the Bigvars are Arrays and Hash-tables. The design principle of both data types are similar in the way that they have many processes that hold data at the bottom level and one or more supervisors that coordinate and contain all necessary information about the all the different processes.\\
+
+In the Big-arrays (distributed Arrays) every worker hold both a local index for it’s data as well as a global one representing which part of the Big-array indexes that worker owns. The supervisors need at all times have a synchronised picture of all the workers to not send data to the wrong place. After some time the Big-array may be changed in ways so that the data is not very efficient distributed, recreating and redistribute the structure of the data type could then be the best answer, however this is very costly. The user have control some control over inserting the data correctly so that the indexes are evenly distributed, the user will have tools to see how well distributed the data is at a specific time. \\
+
+In the Big-hashes (distributed hash table) will operate similar ways as the arrays but for Big-hashes indexes is not necessary. The data still needs to be divided evenly for it to be efficient. To have a good hashing algorithm will solve parts of this problem. If the hashing is evenly distributed one cloud take the hash modulo number of workers to get which worker to hold a specific piece of data. When later that same data is needed the only thing you will need is the key and then you can repeat this process. \\
+
+\subsection{What Encore Provides}
+
+The Encore Language provide an natural design approach to implement the structure described above compared to if the library would have been written in an classic object oriented language like Java. The bottom level each piece of the data structure is constructed by an active object \cite{background}. If we think of a use case where several different processes want to access the same Bigvar, in java you would be needed to create many different locks to avoid data race. In encore each part of the Bigvar will have a queue of operations that wants to access that specific piece of the Bigvar, operations one different parts of the Bigvar could therefor be running in parallel. Worth to note is in some cases sequential operations is wanted to avoid unwanted behavior.
+
+\subsection{Known Problems}
+
+One design problem that needed to be solved is when the Bigvars have several references to the same Bigvar and one of them wanted to change it’s structure, how to update every other  supervisor that the bottom level has changed. In the Big-hashes case the hash modulo number of worker process no longer work when you add more workers the the equation, for the big-arrays the indexes for each process would need to change or the global index would increase. \\
+
+The encore run-time do not guarantee that the machines-scheduler schedule the different processes on different cores, it only allows it to do it. The structure that is created for the Bigvars will be more advanced and will slow down most operation if they are scheduled sequentially. To not let the overhead of the Bigvars become to large is important for an efficient implementation that will be best choice in most use cases. \\
+
+
+
