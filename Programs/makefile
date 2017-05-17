@@ -7,7 +7,7 @@ triangle:
 	encorec $(MapReduce) $(Bighash) $(InputData) TriangleCounting.enc -o triangle
 
 search:
-	encorec $(MapReduce) $(Bighash) $(InputData) ShortestPath.enc -o shortestpath
+	encorec $(MapReduce) $(Bighash) $(InputData) -pg ShortestPath.enc -o shortestpath
 
-WordCount-compile:
+word:
 	encorec $(MapReduce) $(Bighash) $(InputData) -o wordcount WordCount.enc

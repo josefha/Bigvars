@@ -17,7 +17,7 @@ active class Main
         var mapReduce = new MapReduce[int,String,String,int](stringID_NEW)
         var graph = mapReduce.run(consume graph, map, reduce)
 
-        printHash(consume graph)
+        --printHash(consume graph)
     end
 end
 

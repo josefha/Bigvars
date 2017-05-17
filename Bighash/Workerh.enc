@@ -213,9 +213,7 @@ active class Worker[k,v]
         repeat i <- this.tableSize do
             if this.table(i).notEmpty() then
                 for result <- this.table(i).map[k2,v2](m) do
-                    var key = result.0
-                    var value = result.1
-                    bighash.extend(key,value)
+                    bighash.extend(result.0,result.1)
                 end
             end
         end
