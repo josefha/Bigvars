@@ -5,6 +5,8 @@ import HashEntry
 import Combiner
 
 import Bighash -- for mapper and reducer
+import LinkedList
+import Siphash
 
 active class Worker[k,v]
     var id : int
@@ -40,6 +42,12 @@ active class Worker[k,v]
                 this.table(i) = new HashEntry[k,v]()
                 this.filledEntries -= 1
             end
+        end
+    end
+
+    def putMany(pairs:[(k,v,uint)]) : unit
+        for pair <- pairs do
+            this.put(pair.0,pair.1,pair.2)
         end
     end
 
@@ -209,6 +217,20 @@ active class Worker[k,v]
         end
     end
 
+    def reducerOptimzed(r:(k,[v]) -> (k,v),bighash:Bighash[k,v]) : unit
+        var array = new[(k,v)](this.filledEntries)
+        var index = 0
+        repeat i <- this.tableSize do
+            if this.table(i).notEmpty() then
+                var result = this.table(i).reduce(r)
+                array(index) = (result.0,result.1)
+                index += 1
+            end
+        end
+
+        bighash.putManyAndBatch(array)
+    end
+
     def mapperNoCombiner[k2,v2](m:(k,v)->[(k2,v2)],r:(k2,[v2]) -> (k2,v2), bighash:Bighash[k2,v2]) : unit
         repeat i <- this.tableSize do
             if this.table(i).notEmpty() then
@@ -216,6 +238,36 @@ active class Worker[k,v]
                     bighash.extend(result.0,result.1)
                 end
             end
+        end
+    end
+
+    -- Try to decreice the amount of message sent
+    def mapperOptimized[k2,v2](m:(k,v)->[(k2,v2)],r:(k2,[v2]) -> (k2,v2), bighash:Bighash[k2,v2]) : unit
+        var sizeOfNextLevel = bighash.getSizing().0
+
+        var result = new [LinkedList[(k2,v2,uint)]](sizeOfNextLevel)
+        repeat i <- sizeOfNextLevel do
+            result(i) = new LinkedList[(k2,v2,uint)]()
+        end
+
+        val hasher = new Siphash()
+        val toUint = bighash.hashFunction()
+
+        repeat i <- this.tableSize do
+            if this.table(i).notEmpty() then
+                for pair <- this.table(i).map[k2,v2](m) do
+                    val hash = hasher.hash(toUint(pair.0))
+                    val workerID = this.modulo(hash,sizeOfNextLevel)
+                    result(workerID).append((pair.0,pair.1,hash))
+                end
+            end
+        end
+        bighash.sortedExtend(result)
+    end
+
+    def pairsExtend(pairs:[(k,v,uint)]) : unit
+        for pair <- pairs do
+            this.extend(pair.0,pair.1,pair.2)
         end
     end
 end

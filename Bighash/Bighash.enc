@@ -2,6 +2,7 @@
 module Bighash
 
 import Supervisorh
+import LinkedList
 
 linear class Bighash[k,v]
     var supervisor : Supervisor[k,v]
@@ -24,6 +25,10 @@ linear class Bighash[k,v]
 
     def put(key:k,value:v) : unit
         this.supervisor.put(key,value)
+    end
+
+    def putManyAndBatch(pairs:[(k,v)]) : unit
+        this.supervisor.putManyAndBatch(pairs)
     end
 
     def get(key:k) : v
@@ -91,6 +96,10 @@ linear class Bighash[k,v]
 
     def getValues(key:k) : [v]
         this.supervisor.getValues(key)
+    end
+
+    def sortedExtend(pairs:[LinkedList[(k,v,uint)]]) : unit
+        this.supervisor.sortedExtend(pairs)
     end
 
     def mapper[k2,v2](m:(k,v)->[(k2,v2)],r:(k2,[v2]) -> (k2,v2),b:Bighash[k2,v2]) : unit

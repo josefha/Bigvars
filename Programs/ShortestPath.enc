@@ -2,20 +2,33 @@
 import MapReduce
 import Bighash
 
-import BigGraphString --GeneratedGraphs
+import BigGraphString
+--import GeneratedGraphs
 import GraphFunctions
+
+EMBED
+#include <time.h>
+END
 
 active class Main
     var mp : MapReduce[int,Node,int,Node]
 
     def main() : unit
-        --println("Running Parallel breadth-first shortest-path on 10 000 nodes")
+        println("Running Parallel breadth-first shortest-path on 10 000 nodes")
+
         var graph = generateNodes(G5000_10())
         graph = setStartNode(7,consume graph)
+
+        var start = EMBED (EMBED clock_t END) clock(); END
 
         this.mp = new MapReduce[int,Node,int,Node](nodeID)
         graph = this.iterate(25,consume graph)
 
+        EMBED (unit)
+            clock_t diff = clock() - #{start};
+            int msec = diff * 1000 / CLOCKS_PER_SEC;
+            printf("Time taken %d seconds %d milliseconds\n", msec/1000, msec%1000);
+        END
         --printResult(consume graph)
     end
 

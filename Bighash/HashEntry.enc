@@ -55,7 +55,7 @@ local class HashEntry[k,v]
         end
     end
 
-    -- Functions to use for MapRedece Framwork
+    -- Functions used in MapRedece Framwork
 
     def map[k2,v2](m:(k,v)->[(k2,v2)]) : [(k2,v2)]
         m(this.key,this.getValue())
@@ -82,12 +82,17 @@ local class HashEntry[k,v]
     end
 
     def getValues() : [v]
-        var elements = new[v](this.size)
-        repeat i <- this.size do
-            match this.values.element_at(i) with
-                case Just(element) => elements(i) = element
+        var result = new[v](this.size)
+        var index = 0
+        var iterator = this.values.iterator()
+        while iterator.has_next() do
+            match (iterator.next()) with
+                case Just(v) =>
+                    result(index) = v.value
+                end
             end
+            index += 1
         end
-        elements
+        result
     end
 end

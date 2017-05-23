@@ -6,6 +6,7 @@ import Siphash
 import Workerh
 
 import Bighash
+import LinkedList
 
 linear class Supervisor[sharable k,sharable v]
     var numOfWorkers: int
@@ -41,6 +42,45 @@ linear class Supervisor[sharable k,sharable v]
         var hash = this.generateHash(key)
         var workerID = this.modulo(hash,this.numOfWorkers)
         this.workers(workerID) ! put(key,value,hash)
+    end
+
+    def putMany(pairs:[(k,v)]) : unit
+        for pair <- pairs do
+            val hash = this.generateHash(pair.0)
+            val workerID = this.modulo(hash,this.numOfWorkers)
+            this.workers(workerID) ! put(pair.0,pair.1,hash)
+        end
+    end
+
+    def putManyAndBatch(pairs:[(k,v)]) : unit
+        var result = new [LinkedList[(k,v,uint)]](this.numOfWorkers)
+        repeat i <- this.numOfWorkers do
+            result(i) = new LinkedList[(k,v,uint)]()
+        end
+
+        repeat i <- |pairs| do
+            val pair = pairs(i)
+            val hash = this.generateHash(pair.0)
+            val workerID = this.modulo(hash,this.numOfWorkers)
+            result(workerID).append((pair.0,pair.1,hash))
+        end
+
+        repeat id <- |result| do
+            var pairs = result(id)
+            var size = pairs.size()
+            if size > 0 then
+                var array = new [(k,v,uint)](size)
+                repeat i <- size do
+                    match pairs.remove_front() with
+                        case Just(value) =>
+                            array(i) = value
+                        end
+                        case _ => print("ERROR")
+                    end
+                end
+                this.workers(id) ! putMany(array)
+            end
+        end
     end
 
     def get(key:k) : v
@@ -204,6 +244,36 @@ linear class Supervisor[sharable k,sharable v]
         this.workers(workerID) ! extendAll(key,values,hash)
     end
 
+    def sortedExtend(pairsList:[LinkedList[(k,v,uint)]]) : unit
+        repeat id <- |pairsList| do
+            var pairs = pairsList(id)
+            val size = pairs.size()
+            if size > 0 then
+                var result = new[(k,v,uint)](size)
+                var index = 0
+                var iterator = pairs.iterator()
+                while iterator.has_next() do
+                    match (iterator.next()) with
+                        case Just(v) =>
+                            result(index) = v.value
+                        end
+                    end
+                    index += 1
+                end
+                -- repeat i <- size do
+                --     match pairs.remove_front() with
+                --         case Just(value) =>
+                --             result(i) = value
+                --         end
+                --         case _ => print("ERROR")
+                --     end
+                -- end
+                --println("id {} - size = {}",id,size)
+                this.workers(id) ! pairsExtend(result)
+            end
+        end
+    end
+
     def getValues(key:k) : [v]
         var hash = this.generateHash(key)
         var workerID = this.modulo(hash,this.numOfWorkers)
@@ -214,7 +284,9 @@ linear class Supervisor[sharable k,sharable v]
         var futs = new[Fut[unit]](this.numOfWorkers)
         repeat i <- this.numOfWorkers do
             var bighashCopy = bighash.copy()
-            futs(i) = this.workers(i) ! mapper[k2,v2](m,r,consume bighashCopy)
+            --futs(i) = this.workers(i) ! mapper[k2,v2](m,r,consume bighashCopy)
+            --futs(i) = this.workers(i) ! mapperNoCombiner[k2,v2](m,r,consume bighashCopy)
+            futs(i) = this.workers(i) ! mapperOptimized[k2,v2](m,r,consume bighashCopy)
         end
 
         repeat i <- this.numOfWorkers do
@@ -226,7 +298,8 @@ linear class Supervisor[sharable k,sharable v]
         var futs = new[Fut[unit]](this.numOfWorkers)
         repeat i <- this.numOfWorkers do
             var bighashCopy = bighash.copy()
-            futs(i) = this.workers(i) ! reducer(r,consume bighashCopy)
+            --futs(i) = this.workers(i) ! reducer(r,consume bighashCopy)
+            futs(i) = this.workers(i) ! reducerOptimzed(r,consume bighashCopy)
         end
 
         repeat i <- this.numOfWorkers do
