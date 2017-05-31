@@ -143,7 +143,6 @@ active class Worker[k,v]
     end
 
     def rehash() : unit
-        --println("Rehashing {}",this.id)
         var oldTable = this.table
         this.table = this.newTable()
 

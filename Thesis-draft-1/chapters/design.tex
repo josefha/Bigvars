@@ -1,0 +1,19 @@
+\section{Distributed Data Types}
+The distributed data types supported will be distributed Arrays and Hash tables. The design principle of both data types are similar in the way that they have many workers and every worker is a separate processes. Workers hold data at the bottom level and have one or more supervisors that coordinate and contain all necessary information about what the data type consist of. 
+
+\subsubsection{Distributed Arrays}
+In the distributed arrays every worker hold both a local index for it’s data as well as a global one representing which part of the array index that the specific worker owns. The supervisors need at all times have a synchronized picture of all the workers to not send data to the wrong place. After some time the distributed array may be changed in ways so that the data is no longer are very efficient distributed. To solve this recreating and redistribute the structure could then be the best answer, however this can be very costly. The programmer have some control over inserting the data correctly so that the indexes are evenly distributed, tools to see how well distributed the data is at a specific times will be provided. The distributed array will also be able to redistribute itself if certain thresholds are met.
+
+\subsubsection{Distributed Hash Tables}
+The distributed hash tables will operate in similar fashion as the distributed arrays but indexes is not necessary for the hash tables, the data still needs to be divided evenly for it to be efficient. A very good hashing algorithm will create an even distribution. To determine which worker should own an entry a modulo operation will be used on the hashed key value and number of workers, the module operation will return a worker id. When that same data is wanted again the only thing needed is to repeat the process on the key value and send a message to the correct worker. \\
+
+\subsection{What Encore Provides}
+The Encore Language provide an natural design approach to implement the structure described above compared to if the library would have been written in an classic object oriented language like Java. At the bottom level each piece of the data structure will be constructed by an active-object. In a use case where several different processes want to access the same part of the distributed data type one would in java need to create many different locks to avoid data race. In encore each part of the data type will have a queue of operations that wants to access a specific part of the bottom level. Operations on different parts could therefor be run in concurrently and parallel. Note that in some cases sequential operations is wanted to avoid unwanted behavior. The Encore type system also promise to be data-race free \cite{encore}.
+
+\subsection{Design Challenges}
+One design problem that needs to be solved is when the distributed data type have several references pointing to it and one of the references want to change it’s structure. How could every supervisor reference be updated correctly if the bottom level was changed? In the case of the hash tables the hashed key value modulo number of worker algorithm would no longer work if you add more workers the the equation. For the distributed arrays the local or the global indexation have to be changed. Keep in mind that this process could occur when many messages still are waiting on being processed by the workers. \\
+
+The encore runtime do not guarantee that the machines-scheduler schedule the different processes on different cores, it only allows it to do so. The structure that is created for the distributed data types will be more advanced and most operation will be slower then if it wasn't distributed if they are scheduled sequentially. To not let the overhead of the distributed data types become to large is important for it to be best choice in most of it's use cases. 
+
+
+
