@@ -1,26 +1,7 @@
-# Bigvars in Encore
+### Results:
+An Implantation of distributed arrays and hash tables have been implemented with the Encore programming language. It was done by embracing the core features of Encore such as active objects, message passing and futures. To evaluate the usability of the distributed data types a version of the big data framework MapReduce was introduced. We are happy with the result thus the MapReduce framework works as expected and was relative easy to implement with the distributed hash tables as under laying structure. There have and will be other ways to achieve parallelism with collections of data in Encore, still future development for distributed data types will provide the future Encore programmer with a larger tool box. As shown some applications is easier be implement by using the functionality distributed data types provide. With more optimization the implemented distributed would possible be able to compete with other ways to achieve parallelism when dealing with big amounts of data collections.
 
-## Todo:
-* Run Performance tests on Bighash with MapReduce (use Dtrace and flamegraph) []
-* support user Bighash settings [ ]
-* fix Bighash methods remove and elements [ ]
-* Real Test[ ]
-* Delete supervisor in Bighash? []
-* Create MapReduce program Parallel search [x]
-* Create Graph functions based on the generated data [x]
-* Adding all steps in MapReduce [x]
-* correct rehashing/resizing [x]
-* correct types in mapper/reducer in Bighash [x]
-
-### MapReduce Programs
-* WordCount
-* ShortestPath (Parallel breadth-first)
-
-### Notes:
-   * Mining of massive datasets: book.
-   * Language framework Spark.
-
-### BigHash functions:
+### Distributed hash table method list:
 * put(k,v) : unit
 * remove(k) : unit
 * get(k) : v
@@ -36,7 +17,7 @@
 * mapper()
 * reducer()
 
-### List of methods for Prototype 1 for Arrays:
+### Distributed array table method list:
 * array() : [t]
 * at(int) : t
 * print(f: t->s) : unit
@@ -46,9 +27,3 @@
 * update(f: t->t) : unit
 * filter(f: t->Bool) -> Bigvar[t]
 * updateIndex(int,f:t->t) : unit
-
-### init functions
-* randombigvar(size:int, max: int) : Bigvar[int]
-* zerobigvar(size:int) : Bigvar[int]
-* onesbigvar(size:int) : Bigvar[int]
-* rangebigvar(l1:int, l2:int) : Bigvar[int]
