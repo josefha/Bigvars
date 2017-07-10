@@ -2,9 +2,11 @@
 Bighash = -I ../Bighash/
 MapReduce = -I ../MapReduce/
 InputData = -I input-data/
+Stdlib = -I ../encorestdlib/
 
 search:
-	encorec $(MapReduce) $(Bighash) $(InputData) -pg ShortestPath.enc -o shortestpath
+	encorec $(MapReduce) $(Bighash) $(InputData) ShortestPath.enc -o shortestpath
+	./shortestpath
 
 triangle:
 	encorec $(MapReduce) $(Bighash) $(InputData) TriangleCounting.enc -o triangle

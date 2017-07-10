@@ -1,0 +1,38 @@
+import Bighash
+
+EMBED
+#include <time.h>
+END
+
+active class Main
+    def main() : unit
+
+        var hashtable = new Bighash[int,String](intID)
+        var keyarray = new[int](1000000)
+        repeat i <- 1000000 do
+            keyarray(i) = i
+        end
+
+        var start = EMBED (EMBED clock_t END) clock(); END
+
+        repeat i <- 1000000 do
+            hashtable.put(i,"value")
+        end
+
+        repeat i <- 1000000 do
+            hashtable.get(i)
+        end
+
+        --hashtable.getMany(keyarray)
+
+        EMBED (unit)
+            clock_t diff = clock() - #{start};
+            int msec = diff * 1000 / CLOCKS_PER_SEC;
+            printf("Time taken %d seconds %d milliseconds\n", msec/1000, msec%1000);
+        END
+    end
+end
+
+fun intID(key : int) : uint
+    EMBED (uint) (uint64_t) #{key}; END
+end
