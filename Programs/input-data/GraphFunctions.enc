@@ -1,7 +1,7 @@
 
 module GraphFunctions
 
-import Bighash
+import Big.HashMap.HashMap
 
 local class Node
     val id : int

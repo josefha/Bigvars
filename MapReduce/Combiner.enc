@@ -1,8 +1,8 @@
 
 module Combiner
 
-import HashEntry
-import Bighash
+import Big.HashMap.HashEntry
+import Big.HashMap.HashMap
 
 local class Combiner[sharable k,sharable v]
     var tableSize : int
@@ -76,7 +76,6 @@ local class Combiner[sharable k,sharable v]
         uint64_t value = (uint64_t) #{value};
               uint64_t mod   = (uint64_t) #{mod};
               (value % mod);
-
       END
     end
 end
