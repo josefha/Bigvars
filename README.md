@@ -1,6 +1,10 @@
-### Results:
-Big arrays and Big hash maps implementation for the Encore programming language. Embracing the core features of Encore such as active objects, message passing and futures. This work was done as part of my batchelor thesis, for more info take a look at my thesis. 
+### 
+This code library is now merged with the offical Encore lang repo 
 
+### Results:
+Big arrays and Big hash maps implementation in the Encore programming language. Embracing the core features of Encore such as active objects, message passing and futures. This work was done as part of a batchelor thesis, for more info take a look at my thesis.
+
+Link to my thesis: http://uu.diva-portal.org/smash/get/diva2:1275573/FULLTEXT01.pdf
 Link to the Encore Language repo: https://github.com/parapluu/encore
 
 ### Big hash map method list:
